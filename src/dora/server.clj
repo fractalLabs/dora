@@ -13,6 +13,7 @@
             [ring.middleware.nested-params :refer [wrap-nested-params]]
             [ring.middleware.params :refer [wrap-params]]
             [dora.core :refer :all]
+            [dora.data :refer :all]
             [dora.pro-file :refer :all]
             [mongerr.core :refer :all]
             [nillib.formats :refer :all]))
