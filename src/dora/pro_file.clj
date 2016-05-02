@@ -63,11 +63,14 @@
 (defn format-metadatas [m]
   (identity m)) ;TODO: just a placeholder
 
-(defn broken-link-recommendation [url]
+(defn broken-link-recommendation
+  "If the URL was reported as broken today, raise this alert"
+  [url]
   (if-let [rec (broken-today url)]
     (assoc rec :name "La URL no está disponible"
            :description "Esto puede significar que la URL está caída, o no sea accesible para robots."
-           :more-info "http://datos.gob.mx/guia/publica/paso-2-1.html")))
+           :more-info "http://datos.gob.mx/guia/publica/paso-2-1.html"
+           :clave "d01")))
 
 (def acento-regex #"[áéíóúÁÉÍÓÚ]")
 
@@ -76,19 +79,31 @@
   [s]
   (if (re-find acento-regex s)
     {:name "La URL contiene acentos"
-     :description "Es recomendable que las urls no contengas acentos."}))
+     :description "Es recomendable que las urls no contengas acentos."
+     :clave "i11"}))
+
+(defn encoding-recommendation
+  "Check file encoding against a list of blacklisted encodings"
+  [metadata]
+  (if (re-find #"8859" (metadata "file"))
+    {:name "El archivo está en una codificación no universal"
+     :description "Es recomendable utilizar la codificación UTF-8"
+     :clave "i12"}))
 
 (defn dora-view [result]
   (let [url (:url result)
         resource (db-findf :resources {:url url})
-        ] ;todo agregar dataset
+        metadata (format-metadatas (apply merge
+                                          resource
+                                          (map #(hash-map (:meta %) (:data %))
+                                               (:metadata result))))
+
+        ] ;TODO agregar dataset
     {:resource resource
-     :metadata (format-metadatas (apply merge
-                                        resource
-                                        (map #(hash-map (:meta %) (:data %))
-                                             (:metadata result))))
-     :recomendations (remove-nils [(acento-recommendation url)
-                                   (broken-link-recommendation url)])}))
+     :metadata metadata
+     :recommendations (remove-nils [(broken-link-recommendation url)
+                                    (encoding-recommendation metadata)
+                                    (acento-recommendation url)])}))
 
 (defn profile
   "if first time, run validations and store.
