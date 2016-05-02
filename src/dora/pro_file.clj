@@ -69,6 +69,15 @@
            :description "Esto puede significar que la URL está caída, o no sea accesible para robots."
            :more-info "http://datos.gob.mx/guia/publica/paso-2-1.html")))
 
+(def acento-regex #"[áéíóúÁÉÍÓÚ]")
+
+(defn acento-recommendation
+  "Si la string tiene acentos, emite una recomendacion de no usar acentos en la URL"
+  [s]
+  (if (re-find acento-regex s)
+    {:name "La URL contiene acentos"
+     :description "Es recomendable que las urls no contengas acentos."}))
+
 (defn dora-view [result]
   (let [url (:url result)
         resource (db-findf :resources {:url url})
@@ -78,7 +87,8 @@
                                         resource
                                         (map #(hash-map (:meta %) (:data %))
                                              (:metadata result))))
-     :recomendations (remove-nils [() (broken-today url)])}))
+     :recomendations (remove-nils [(acento-recommendation url)
+                                   (broken-link-recommendation url)])}))
 
 (defn profile
   "if first time, run validations and store.
