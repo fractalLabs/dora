@@ -3,6 +3,7 @@
             [clojure.java.shell :as sh]
             [clojure.string :as s]
             [clojure.zip :as zip]
+            [environ.core :refer [env]]
             [mongerr.core :refer :all]
             [dora.util :refer :all]
             [nillib.formats :refer :all]
@@ -48,7 +49,7 @@
     (shs "mkdir" "/tmp/zip")
     (shs "mkdir" (directory "zip/" newname))
     (shs "unzip" file "-d" (str "/tmp/zip/" newname "/"))
-   ; (shs "rm" file)
+   ;(shs "rm" file)
     (str "/tmp/zip/" newname)))
 
 (defn trash-file? [s]

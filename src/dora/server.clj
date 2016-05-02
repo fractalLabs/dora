@@ -41,7 +41,9 @@
         (do (println "Request: " params)
             (repl-route params)))
    (ANY "/validate" [& params]
-        (validate params))
+        (validate (:url params)))
+   (ANY "/resource" [& params]
+        (slurp (data-directory (:id (db-findf :resources params)))))
    (GET "/db" [& params]
         (println (:collection params) (dissoc params :collection))
         (db-find (:collection params) (parse-strings (dissoc params :collection))))
