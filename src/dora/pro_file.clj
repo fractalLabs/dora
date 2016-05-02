@@ -79,7 +79,7 @@
   [s]
   (if (re-find acento-regex s)
     {:name "La URL contiene acentos"
-     :description "Es recomendable que las urls no contengas acentos."
+     :description "Es recomendable que las urls no contengan acentos."
      :clave "i11"}))
 
 (defn encoding-recommendation
