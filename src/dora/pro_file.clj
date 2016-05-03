@@ -69,6 +69,12 @@
             (map #(% rel)
                  csv-validations))))
 
+(defn csv-engine-metadata
+  "Run validations specific to CSV, returning hashmaps of meta and data"
+  [file]
+  (let [md (csv-engine file)]
+    (map #(hash-map :meta (first %) :data (second %)) md)))
+
 (defn dora-insert
   "Insert a newly read url into db"
   [url]
@@ -97,13 +103,15 @@
 
 (defn execute-validations
   "Execution engine ;)"
-  [file-name]
-  (map #(hash-map :meta (str %1) :data %2)
-       metas
-       (pmap #(try                      ;(if (string? %)
-                (shsh % file-name)      ;    (% data))
-                (catch Exception e (str e)))
-             metas)))
+  [file-name url]
+  (remove-nils (concat (map #(hash-map :meta (str %1) :data %2)
+                            metas
+                            (pmap #(try                   ;(if (string? %)
+                                     (shsh % file-name)   ;    (% data))
+                                     (catch Exception e (str e)))
+                                  metas))
+                       (if (re-find #"csv|CSV" url)
+                           (csv-engine-metadata file-name)))))
 
 (defn format-metadatas [m]
   (identity m)) ;TODO: just a placeholder
@@ -167,7 +175,7 @@
      (dora-view result)
      (let [tmp (dora-insert url)
            file-name (download-if-url url)
-           results (execute-validations file-name)]
+           results (execute-validations file-name url)]
          (dora-update url results)
          (dora-view (dora-find url))))))
 
