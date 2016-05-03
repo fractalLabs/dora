@@ -25,6 +25,26 @@
    "validaciones/IDMX/code/prep_proc.sh"
    "validaciones/repetidos"])
 
+(defn nils-csv-validation
+  "Are there elements in a rel with too many nils?"
+  [rel]
+  (let [total (count (first rel))
+        totals (map #(count (remove-nils (vals %))) rel)
+        mini (apply min totals)]
+    (if (> total 2)
+      (if (> 3 mini)
+        true)
+      false)))
+
+(defn number-weird-format?
+  "Does the number have a weird format
+  such as '$' 'Kg' or anything that is not a number?"
+  [s]
+  (not= s (first (re-find number-regex s))))
+
+(def csv-validations
+  [])
+
 (defn dora-insert
   "Insert a newly read url into db"
   [url]
@@ -105,9 +125,7 @@
         metadata (format-metadatas (apply merge
                                           resource
                                           (map #(hash-map (:meta %) (:data %))
-                                               (:metadata result))))
-
-        ] ;TODO agregar dataset
+                                               (:metadata result))))] ;TODO agregar dataset
     {:resource resource
      :metadata metadata
      :recommendations (remove-nils [(broken-link-recommendation url)
