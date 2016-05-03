@@ -91,6 +91,14 @@
      :description "Es recomendable utilizar la codificación UTF-8"
      :clave "i12"}))
 
+(defn duplicated-url-recommendation
+  "Checks if there are more than one resource with this url"
+  [url]
+  (if (> (count (re-find :resources {:url url})))
+    {:name "Hay mas de un recurso de datos con esta URL"
+     :description "No es necesario que los mismos datos estén dados de alta mas de una vez. Revisar otras áreas, o dependencias que tengan estos datos publicados."
+     :clave "c42"}))
+
 (defn dora-view [result]
   (let [url (:url result)
         resource (db-findf :resources {:url url})
@@ -103,8 +111,10 @@
     {:resource resource
      :metadata metadata
      :recommendations (remove-nils [(broken-link-recommendation url)
+                                    (acento-recommendation url)
                                     (encoding-recommendation metadata)
-                                    (acento-recommendation url)])}))
+                                    (duplicated-url-recommendation url)
+                                    ])}))
 
 (defn profile
   "if first time, run validations and store.
