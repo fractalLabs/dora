@@ -22,7 +22,8 @@
   ["head -n 1"
    "file"
    "wc -l"
-   "validaciones/IDMX/code/prep_proc.sh"])
+   "validaciones/IDMX/code/prep_proc.sh"
+   "validaciones/repetidos"])
 
 (defn dora-insert
   "Insert a newly read url into db"
