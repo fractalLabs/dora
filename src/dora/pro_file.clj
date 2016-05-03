@@ -44,8 +44,30 @@
     (not= s num)
     false))
 
+(defn or*
+  "Apply or to a list of predicates"
+  [coll]
+  (if-let [t? (some true? coll)]
+    true
+    false))
+
+(defn has-weird-format-numbers?
+  [rel]
+  (or* (map number-weird-format? (vals (first rel)))))
+
 (def csv-validations
-  [])
+  "Vector of validations aplicable only to rels generated from CSV"
+  [nils-csv-validation
+   has-weird-format-numbers?])
+
+(defn csv-engine
+  "Run validations specific to CSV"
+  [file]
+  (let [rel (csv file)]
+    (zipmap (map #(str (quote %))
+                 csv-validations)
+            (map #(% rel)
+                 csv-validations))))
 
 (defn dora-insert
   "Insert a newly read url into db"
