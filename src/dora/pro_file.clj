@@ -40,7 +40,9 @@
   "Does the number have a weird format
   such as '$' 'Kg' or anything that is not a number?"
   [s]
-  (not= s (first (re-find number-regex s))))
+  (if-let [num (first (re-find number-regex s))]
+    (not= s num)
+    false))
 
 (def csv-validations
   [])
