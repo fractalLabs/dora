@@ -19,11 +19,13 @@
 
 (def metas
   "Vector of 'validations' or scripts whose output we collect"
-  ["head -n 1"
-   "file"
-   "wc -l"
+  ["head -n 1" ;first line
+   "file"      ;file type, encoding
+   "wc -l"     ;line count
+   "du -h"     ;file size
    "validaciones/IDMX/code/prep_proc.sh"
-   "validaciones/repetidos"])
+   "validaciones/repetidos" ;conteo de lineas repetidas
+   ])
 
 (defn nils-csv-validation
   "Are there elements in a rel with too many nils?"
