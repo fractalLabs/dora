@@ -27,6 +27,11 @@
    "validaciones/repetidos" ;conteo de lineas repetidas
    ])
 
+(defmacro try-catch [body]
+  `(try
+     ~body
+     (catch Exception e# (str "error " e#))))
+
 (defn nils-csv-validation
   "Are there elements in a rel with too many nils?"
   [rel]
@@ -62,13 +67,19 @@
   [nils-csv-validation
    has-weird-format-numbers?])
 
+(defn eval-csv-validation
+  "Instead of just running the function, handle its exceptions"
+  [f rel]
+  (try (f rel)
+       (catch Exception e "error")))
+
 (defn csv-engine
   "Run validations specific to CSV"
   [file]
   (let [rel (csv file)]
     (zipmap (map #(str (quote %))
                  csv-validations)
-            (map #(% rel)
+            (map #(eval-csv-validation % rel)
                  csv-validations))))
 
 (defn csv-engine-metadata
@@ -153,6 +164,15 @@
      :description "No es necesario que los mismos datos estén dados de alta mas de una vez. Revisar otras áreas, o dependencias que tengan estos datos publicados."
      :clave "c42"}))
 
+(defn recommendations
+  "Generate recommendations from a file url and its metadata"
+  [url metadata]
+  (remove-nils [(try-catch (broken-link-recommendation url))
+                (try-catch (acento-recommendation url))
+                (try-catch (encoding-recommendation metadata))
+                (try-catch (duplicated-url-recommendation url))
+                ]))
+
 (defn dora-view [result]
   (let [url (:url result)
         resource (db-findf :resources {:url url})
@@ -162,11 +182,7 @@
                                                (:metadata result))))] ;TODO agregar dataset
     {:resource resource
      :metadata metadata
-     :recommendations (remove-nils [(broken-link-recommendation url)
-                                    (acento-recommendation url)
-                                    (encoding-recommendation metadata)
-                                    (duplicated-url-recommendation url)
-                                    ])}))
+     :recommendations (recommendations url metadata)}))
 
 (defn profile
   "if first time, run validations and store.
