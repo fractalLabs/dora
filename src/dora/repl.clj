@@ -16,6 +16,7 @@
             [dora.p.agente-web :refer :all]
             [dora.p.ckan :refer :all]
             [dora.data :refer :all]
+            [dora.p.adela :refer :all]
             [dora.p.data-core :refer :all]
             [dora.p.download :refer :all]
             [dora.p.ligas :refer :all]

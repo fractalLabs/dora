@@ -5,6 +5,7 @@
             [clojure.set :refer :all]
             [clojure.string :as s]
             [mongerr.core :refer :all]
+            [dora.p.adela :refer :all]
             [dora.p.agente-web :refer :all]
             [dora.util :refer :all]
             [nillib.formats :refer :all]
@@ -176,11 +177,18 @@
 (defn dora-view [result]
   (let [url (:url result)
         resource (db-findf :resources {:url url})
+        dataset (db-findf :datasets {:id (:dataset_id resource)})
+        catalog (find-catalog-by-dataset-name (:title dataset))
+        catalog-dataset (first (find-rel :title (:title dataset) (:dataset catalog)))
         metadata (format-metadatas (apply merge
                                           resource
                                           (map #(hash-map (:meta %) (:data %))
-                                               (:metadata result))))] ;TODO agregar dataset
+                                               (:metadata result))))]
     {:resource resource
+     :dataset dataset
+     :catalog (dissoc catalog :dataset)
+     :catalog-dataset (dissoc catalog-dataset :distribution)
+     :catalog-dataset-resource (first (find-rel :title (:title resource) (:distribution catalog-dataset)))
      :metadata metadata
      :recommendations (recommendations url metadata)}))
 
