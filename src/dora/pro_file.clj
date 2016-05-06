@@ -185,7 +185,7 @@
                                           (map #(hash-map (:meta %) (:data %))
                                                (:metadata result))))]
     {:resource resource
-     :dataset dataset
+     :dataset (dissoc dataset :resources)
      :catalog (dissoc catalog :dataset)
      :catalog-dataset (dissoc catalog-dataset :distribution)
      :catalog-dataset-resource (first (find-rel :title (:title resource) (:distribution catalog-dataset)))
