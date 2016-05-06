@@ -54,7 +54,7 @@
         (json (db-find (:collection params) (parse-strings (dissoc params :collection)))))
    (GET "/db/:collection" [& params]
         (println "? o que " params)
-        (json (db-find (:collection params) (parse-strings (dissoc params :collection))))
+        (json (db-find (:collection params) (parse-strings (dissoc params :collection)))))
    (ANY "/csv" [:as {params :params}]
         (-> params
             :expr
