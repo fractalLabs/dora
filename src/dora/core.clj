@@ -189,7 +189,9 @@
                (replace-nil (args :expr) " "))
         return (eval-wrapper expr)
         jsonp (args :jsonp)]
-    (spit "/var/log/repl-route.log" (str args "\n") :append true)
+    (spit "/var/log/repl-route.log"
+          (str args "\n")
+          :append true)
     (try
       (if (empty? (return :error))
         (info args)
