@@ -174,23 +174,32 @@
                 (try-catch (duplicated-url-recommendation url))
                 ]))
 
+(defn resource
+  "Find a resource with a URL"
+  [url]
+  (db-findf :resources {:url url}))
+
+(defn dataset
+  "Given a Resource, return its dataset metadata"
+  [resource]
+  (db-findf :datasets {:id (:dataset_id resource)}))
+
 (defn dora-view [result]
   (let [url (:url result)
-        resource (db-findf :resources {:url url})
-        dataset (db-findf :datasets {:id (:dataset_id resource)})
+        resource (resource url)
+        dataset (dataset resource)
         catalog (find-catalog-by-dataset-name (:title dataset))
         catalog-dataset (first (find-rel :title (:title dataset) (:dataset catalog)))
         metadata (format-metadatas (apply merge
-                                          resource
                                           (map #(hash-map (:meta %) (:data %))
                                                (:metadata result))))]
     {:resource resource
      :dataset (dissoc dataset :resources)
      :catalog (dissoc catalog :dataset)
      :catalog-dataset (dissoc catalog-dataset :distribution)
-     :catalog-dataset-resource (first (find-rel :title (:title resource) (:distribution catalog-dataset)))
-     :metadata metadata
-     :recommendations (recommendations url metadata)}))
+     :catalog-dataset-resource (first (find-rel :title (:name resource) (:distribution catalog-dataset)))
+     :file-metadata metadata
+     :recommendations (remove string? (recommendations url metadata))}))
 
 (defn profile
   "if first time, run validations and store.
