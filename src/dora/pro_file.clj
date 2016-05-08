@@ -201,6 +201,13 @@
      :file-metadata metadata
      :recommendations (remove string? (recommendations url metadata))}))
 
+(defn save-fusion
+  ([] (save-fusion (db :resources)))
+  ([resources]
+   (map #(try (db-insert :fusion (dora-view %))
+              (catch Exception e (db-insert :fusion_errors (assoc %) :exception (str e))))
+        resources)))
+
 (defn profile
   "if first time, run validations and store.
   For returning costumers return previous results"
