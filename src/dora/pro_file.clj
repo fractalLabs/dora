@@ -165,13 +165,22 @@
      :description "No es necesario que los mismos datos estén dados de alta mas de una vez. Revisar otras áreas, o dependencias que tengan estos datos publicados."
      :clave "c42"}))
 
+(defn resource-description-recommendation
+  "Checks if the resource has no description"
+  [resource]
+  (if (empty? (:description resource))
+    {:name "El recurso no tiene descripción"
+     :description "Es necesario agregar una descripción al recurso, para que sea fácil entender la finalidad del recurso"
+     :clave "u22"}))
+
 (defn recommendations
   "Generate recommendations from a file url and its metadata"
-  [url metadata]
+  [url metadata resource]
   (remove-nils [(try-catch (broken-link-recommendation url))
                 (try-catch (acento-recommendation url))
                 (try-catch (encoding-recommendation metadata))
                 (try-catch (duplicated-url-recommendation url))
+                (try-catch (resource-description-recommendation resource))
                 ]))
 
 (defn resource
@@ -199,7 +208,7 @@
      :catalog-dataset (dissoc catalog-dataset :distribution)
      :catalog-dataset-resource (first (find-rel :title (:name resource) (:distribution catalog-dataset)))
      :file-metadata metadata
-     :recommendations (remove string? (recommendations url metadata))}))
+     :recommendations (remove string? (recommendations url metadata resource))}))
 
 (defn save-fusion
   ([] (save-fusion (db :resources)))
