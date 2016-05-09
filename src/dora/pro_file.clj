@@ -139,7 +139,7 @@
            :more-info "http://datos.gob.mx/guia/publica/paso-2-1.html"
            :clave "d01")))
 
-(def acento-regex #"[áéíóúÁÉÍÓÚ]")
+(def acento-regex #"[áéíóúÁÉÍÓÚñÑ]")
 
 (defn acento-recommendation
   "Si la string tiene acentos, emite una recomendacion de no usar acentos en la URL"
