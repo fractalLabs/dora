@@ -105,8 +105,7 @@
   "Run validations specific to CSV"
   [file]
   (let [rel (csv file)]
-    (zipmap (map #(str (quote %))
-                 csv-validations)
+    (zipmap (map str csv-validations)
             (map #(eval-csv-validation % rel)
                  csv-validations))))
 
