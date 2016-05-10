@@ -23,15 +23,24 @@ O para ejecutar otros comandos, en formato de Clojure, usa la api de código de 
 
 Para ver la fusión de datos, haz `(fusion "URL")`.
 
-La fusión de datos devuelve un objeto con los siguientes atributos:
+### La fusión de datos devuelve un objeto con los siguientes atributos:
 
 `resource` (el objeto de CKAN del recurso)
+
 `dataset` (el objeto de CKAN del dataset al q pertenece)
+
 `catalog` (el contenido del catalogo, de ADELA, de hasta arriba sin lo anidado)
+
 `catalog-dataset` (el contenido del catalogo sobre el dataset, de ADELA, sin la lista de recursos)
+
 `catalog-dataset-resource` (el contenido del catalogo especifico del recurso)
+
 `file-metadata` (la data producto de los scripts de metadatos/validacion)
+
 `recommendations` (la lista de recomendaciones generadas)
+
+
+## License
 
 Copyright © 2016 MX Abierto
 

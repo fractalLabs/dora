@@ -63,10 +63,37 @@
   [rel]
   (or* (map number-weird-format? (vals (first rel)))))
 
+(defn rel-sample
+  "take some random elements from the rel"
+  ([rel]
+    (rel-sample 20 rel))
+  ([n rel]
+    (take n (shuffle rel))))
+
+(defn has-numbers?
+  "The string has numbers in it?"
+  [s]
+  (if (re-find number-regex s)
+      true
+      false))
+
+(defn vec-has-mixed-formats
+  "Does a vector have a mix of numbers and strings?"
+  [v]
+  (apply not= (map has-numbers? v)))
+
+(defn has-mixed-formats
+  "Does the rel contain a mix of numbers and strings in some field?"
+  [rel]
+  (let [rel (rel-sample rel)
+        ks (keys (first rel))]
+    (or* (map vec-has-mixed-formats (map (fn [k] (map k rel)) ks)))))
+
 (def csv-validations
   "Vector of validations aplicable only to rels generated from CSV"
   [nils-csv-validation
-   has-weird-format-numbers?])
+   has-weird-format-numbers?
+   has-mixed-formats])
 
 (defn eval-csv-validation
   "Instead of just running the function, handle its exceptions"
