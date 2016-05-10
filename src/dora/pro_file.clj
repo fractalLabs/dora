@@ -199,6 +199,44 @@
      :description "Es necesario agregar una descripción al recurso, para que sea fácil entender la finalidad del recurso"
      :clave "u22"}))
 
+(defn has-mixed-formats-recommendation
+  [m]
+  (if (not (empty? (filter #(and (re-find #"has_mixed_formats" (:meta %))
+                                 (= true (:data %)))
+                           m)))
+    {:name "El archivo contiene columnas en las que algunos elementos tienen números y otros no"
+     :description "Evitar tener valores de diferentes tipos (como texto y número) para una columna en diferentes registros o filas.
+"
+     :clave "c41"}))
+
+(defn nils-csv-validation-recommendation
+  [m]
+  (if (not (empty? (filter #(and (re-find #"nils-csv-validation" (:meta %))
+                                 (= true (:data %)))
+                           m)))
+    {:name "El archivo contiene filas vacías"
+     :description "Eliminar filas y columnas vacías, al igual que cálculos adicionales en formatos tabulares, p. ej. una celda “Total” con la suma de una de las columnas."
+     :clave "m31"}))
+
+(defn has-weird-format-numbers?-recommendation
+  [m]
+  (if (not (empty? (filter #(and (re-find #"has-weird-format-numbers?" (:meta %))
+                                 (= true (:data %)))
+                           m)))
+    {:name "Hay campos numéricos que contienen caracteres no numéricos"
+     :description "Los campos numéricos, incluyendo los monetarios y magnitudes, deben permanecer en un formato numérico de tipo entero o flotante. Es decir, evitar agregar símbolos monetarios o de unidades de medición, p. ej. “200 m2” o “£20”, haciendo explícitas las unidades en el nombre de la columna, o en una segunda columna. P. ej. “Monto en MXN”, “Distancia en KM”."
+     :clave "m33"}))
+
+(comment
+  (defn -recommendation
+    [m]
+    (if (not (empty? (filter #(and (re-find #"" (:meta %))
+                                   (= true (:data %)))
+                             m)))
+      {:name ""
+       :description ""
+       :clave ""})))
+
 (defn recommendations
   "Generate recommendations from a file url and its metadata"
   [url metadata resource]
@@ -207,6 +245,9 @@
                 (try-catch (encoding-recommendation metadata))
                 (try-catch (duplicated-url-recommendation url))
                 (try-catch (resource-description-recommendation resource))
+                (try-catch (has-mixed-formats-recommendation metadata))
+                (try-catch (nils-csv-validation-recommendation metadata))
+                (try-catch (has-weird-format-numbers?-recommendation metadata))
                 ]))
 
 (defn resource
