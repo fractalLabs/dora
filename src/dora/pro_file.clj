@@ -80,7 +80,7 @@
 (defn vec-has-mixed-formats
   "Does a vector have a mix of numbers and strings?"
   [v]
-  (apply not= (map has-numbers? v)))
+  (apply not= (remove-nils (map has-numbers? v))))
 
 (defn has-mixed-formats
   "Does the rel contain a mix of numbers and strings in some field?"
