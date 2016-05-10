@@ -237,6 +237,8 @@
      :file-metadata metadata
      :recommendations (remove string? (recommendations url metadata resource))}))
 
+(def fusion dora-view)
+
 (defn save-fusion
   ([] (save-fusion (db :resources)))
   ([resources]
