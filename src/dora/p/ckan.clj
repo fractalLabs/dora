@@ -113,7 +113,8 @@
                  (catch Exception e (println "error with: " (:slug %))))
            (db :adela-organizations)))
   ([slug]
-   (adela-staging-api "api/v1/organizations/" slug "/inventory.json")))
+   (assoc (adela-staging-api "api/v1/organizations/" slug "/inventory.json")
+          :slug slug)))
 
 (defn organizations-req
   ([] (organizations-req 1))
