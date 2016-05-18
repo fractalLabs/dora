@@ -97,7 +97,8 @@
                  (s/join endpoint))))
 
 (defn adela-catalog [slug]
-  (adela-api slug "/catalogo.json"))
+  (assoc (adela-api slug "/catalogo.json")
+         :slug slug))
 
 (defn adela-plan [slug]
   (adela-api slug "/plan.json"))
