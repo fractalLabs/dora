@@ -281,12 +281,54 @@
 
 (def fusion dora-view)
 
+(defn inventory-resources
+  []
+  (mapcat :distribution (mapcat :dataset (db-find :adela-inventories))))
+
+(defn flatten-inventory [i]
+  (map #(hash-map :dataset %
+                  :inventory (dissoc i :dataset))
+       (:dataset i)))
+
+(defn flatten-inventory-dataset
+  [d]
+  (map #(hash-map :dataset (dissoc (:dataset d) :distribution)
+                  :inventory (:inventory d)
+                  :resource %)
+       (:distribution (:dataset d))))
+
+(defn inventory-resources-denormalized []
+  (let [inventories (db :adela-inventories)
+        datasets (mapcat flatten-inventory inventories)]
+    (mapcat flatten-inventory-dataset datasets)))
+
+(defn dora-view-inventory    ;will expect entries from inventory-resources-denormalized
+  [result]
+  (let [url (:downloadURL (:resource result))
+        resource (resource url)
+        dataset (dataset resource)
+        metadata (format-metadatas (apply merge
+                                          (map #(hash-map (:meta %) (:data %))
+                                               (:metadata (db-findf :dora {:url url})))))]
+    (assoc result
+           :resource resource
+           :dataset (dissoc dataset :resources)
+           :file-metadata metadata
+           :recommendations (remove string? (recommendations url metadata (:resource result))))))
+
 (defn save-fusion
   ([] (save-fusion (db :resources)))
   ([resources]
    (map #(try (db-insert :fusion (dora-view %))
-              (catch Exception e (db-insert :fusion_errors (assoc %) :exception (str e))))
+              (catch Exception e (db-insert :fusion_errors (assoc % :exception (str e)))))
         resources)))
+
+(defn save-fusion-inventory
+  ([] (save-fusion-inventory (inventory-resources-denormalized)))
+  ([results]
+   (map #(try (db-insert :fusion_inventory (dora-view-inventory %))
+              (catch Exception e (db-insert :errors_fusion_inventory (assoc % :exception (str e)))))
+        results)))
 
 (defn recommendations-to-send
   []
