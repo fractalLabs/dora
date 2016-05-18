@@ -109,9 +109,10 @@
   (remove nil? (map (comp adela-plan :slug) (adela-api "api/v1/catalogs"))))
 
 (defn adela-inventory
-  ([] (map #(try (adela-inventory (:slug %))
-                 (catch Exception e (println "error with: " (:slug %))))
-           (db :adela-organizations)))
+  ([] (remove #(nil? (:title %))
+              (map #(try (adela-inventory (:slug %))
+                         (catch Exception e (println "error with: " (:slug %))))
+                   (db :adela-organizations))))
   ([slug]
    (assoc (adela-staging-api "api/v1/organizations/" slug "/inventory.json")
           :slug slug)))
