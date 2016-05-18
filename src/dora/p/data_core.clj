@@ -41,7 +41,7 @@
 
 (defn update-db [coll fn]
   (do (db-delete coll)
-      (db-insert coll (fn))))
+      (db-insert coll (remove-nils (fn)))))
 
 (defn data-core []
   (doall [(update-db :instituciones instituciones)
