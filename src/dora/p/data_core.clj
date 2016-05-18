@@ -52,6 +52,7 @@
           (update-db :adela-catalogs adela-catalogs)
           (update-db :adela-plans adela-plans)
           (update-db :adela-organizations adela-organizations)
+          (update-db :adela-inventories adela-inventory)
           (dc-update)]))
 
 (defn metricas

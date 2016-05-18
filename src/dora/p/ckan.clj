@@ -92,6 +92,10 @@
   (get-json (str adela-url
                  (s/join endpoint))))
 
+(defn adela-staging-api [& endpoint]
+  (get-json (str "http://adela-staging.herokuapp.com/"
+                 (s/join endpoint))))
+
 (defn adela-catalog [slug]
   (adela-api slug "/catalogo.json"))
 
@@ -103,6 +107,11 @@
 
 (defn adela-plans []
   (remove nil? (map (comp adela-plan :slug) (adela-api "api/v1/catalogs"))))
+
+(defn adela-inventory
+  ([] (map (comp adela-inventory :slug) (db :adela-organizations)))
+  ([slug]
+   (adela-staging-api "api/v1/organizations/" slug "/inventory.json")))
 
 (defn organizations-req
   ([] (organizations-req 1))

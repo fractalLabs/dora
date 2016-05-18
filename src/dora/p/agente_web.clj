@@ -197,9 +197,7 @@
                                    (filter #(t/before? (t/today-at-midnight) (:now %))
                                    (db-find :status {:status :error
                                                      ;:time {$gte (t/today-at-midnight)}
-                                                    }))
-
-                                   )))
+                                                    })))))
 
 (defn save-broken-links []
   (db-insert :status-broken (map #(assoc % :now (t/now))

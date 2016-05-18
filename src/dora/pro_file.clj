@@ -273,7 +273,9 @@
      :dataset (dissoc dataset :resources)
      :catalog (dissoc catalog :dataset)
      :catalog-dataset (dissoc catalog-dataset :distribution)
-     :catalog-dataset-resource (first (find-rel :title (:name resource) (:distribution catalog-dataset)))
+     :catalog-dataset-resource (first (find-rel :title
+                                                (:name resource)
+                                                (:distribution catalog-dataset)))
      :file-metadata metadata
      :recommendations (remove string? (recommendations url metadata resource))}))
 
@@ -285,6 +287,17 @@
    (map #(try (db-insert :fusion (dora-view %))
               (catch Exception e (db-insert :fusion_errors (assoc %) :exception (str e))))
         resources)))
+
+(defn recommendations-to-send
+  []
+  (let [fsn (map dora-view (db :resources))]
+    (filter #(not (empty? (:recommendations %))) fsn)))
+
+(defn dissoc-non-essentials-4-rec
+  [fsn-m]
+  {:url (:url (:resource fsn-m))
+   :organization (:title (:organization (:dataset fsn-m)))
+   :recommendations (:recommendations fsn-m)})
 
 (defn profile
   "if first time, run validations and store.
