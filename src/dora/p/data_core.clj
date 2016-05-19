@@ -45,18 +45,18 @@
       (db-insert coll (remove-nils (fn)))))
 
 (defn data-core []
-  (doall [(update-db :instituciones instituciones)
-          (update-db :zendesk-tickets all-tickets)
-          (update-db :zendesk-organizations all-organizations)
-          (update-db :zendesk-satisfaction all-satisfaction)
-          (update-db :zendesk-users all-users)
-          (update-db :adela-catalogs adela-catalogs)
-          (update-db :adela-plans adela-plans)
-          (update-db :adela-organizations adela-organizations)
-          (update-db :adela-inventories adela-inventory)
-          (update-db :google_analytics download-data)
-          (dc-update)
-          (println "finished updating")]))
+  (println (doall [(update-db :instituciones instituciones)
+                   (update-db :zendesk-tickets all-tickets)
+                   (update-db :zendesk-organizations all-organizations)
+                   (update-db :zendesk-satisfaction all-satisfaction)
+                   (update-db :zendesk-users all-users)
+                   (update-db :adela-catalogs adela-catalogs)
+                   (update-db :adela-plans adela-plans)
+                   (update-db :adela-organizations adela-organizations)
+                   (update-db :adela-inventories adela-inventory)
+                   (update-db :google_analytics download-data)
+                   (dc-update)])
+           " finished updates"))
 
 (defn metricas
   "Despliega las Métricas de Data Core"
