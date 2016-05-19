@@ -309,19 +309,20 @@
     (mapcat flatten-inventory-dataset datasets)))
 
 (defn dora-view-inventory    ;will expect entries from inventory-resources-denormalized
-  [result]
-  (let [url (:downloadURL (:resource result))
-        resource (resource url)
-        dataset (dataset resource)
-        metadata (format-metadatas (apply merge
-                                          (map #(hash-map (:meta %) (:data %))
-                                               (:metadata (db-findf :dora {:url url})))))]
-    (assoc result
-           :resource resource
-           :dataset (dissoc dataset :resources)
-           :analytics (analytics url)
-           :file-metadata metadata
-           :recommendations (remove string? (recommendations url metadata (:resource result))))))
+  ([] (map #(try (dora-view-inventory %) (catch Exception e)) (inventory-resources-denormalized)))
+  ([result]
+   (let [url (:downloadURL (:resource result))
+         resource (resource url)
+         dataset (dataset resource)
+         metadata (format-metadatas (apply merge
+                                           (map #(hash-map (:meta %) (:data %))
+                                                (:metadata (db-findf :dora {:url url})))))]
+     (assoc result
+            :resource resource
+            :dataset (dissoc dataset :resources)
+            :analytics (analytics url)
+            :file-metadata metadata
+            :recommendations (remove string? (recommendations url metadata (:resource result)))))))
 
 (defn save-fusion
   ([] (save-fusion (db :resources)))

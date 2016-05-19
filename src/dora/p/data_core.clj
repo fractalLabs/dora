@@ -55,6 +55,7 @@
                    (update-db :adela-organizations adela-organizations)
                    (update-db :adela-inventories adela-inventory)
                    (update-db :google_analytics download-data)
+                   (update-db :fusion_inventory dora-view-inventory)
                    (dc-update)])
            " finished updates"))
 
