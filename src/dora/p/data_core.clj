@@ -5,6 +5,7 @@
             [mongerr.core :refer :all]
             [dora.p.ckan :refer :all]
             [dora.p.zendesk :refer :all]
+            [dora.pro-file :refer :all]
             [monger.operators :refer :all]
             [nillib.formats :refer :all]
             [nillib.worm :refer :all]))
