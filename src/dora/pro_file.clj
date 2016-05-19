@@ -260,6 +260,11 @@
   [resource]
   (db-findf :datasets {:id (:dataset_id resource)}))
 
+(defn analytics
+  "get the stored google analytics history"
+  [url]
+  (:value (db-findf :google_analytics {:url (c/url-encode url)})))
+
 (defn dora-view [result]
   (let [url (:url result)
         resource (resource url)
@@ -313,6 +318,7 @@
     (assoc result
            :resource resource
            :dataset (dissoc dataset :resources)
+           :analytics (analytics url)
            :file-metadata metadata
            :recommendations (remove string? (recommendations url metadata (:resource result))))))
 

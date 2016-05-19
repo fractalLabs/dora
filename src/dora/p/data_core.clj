@@ -1,6 +1,7 @@
 (ns dora.p.data-core
   (:require [clojure.set :refer :all]
             [clojure.string :as s]
+            [dgm-analytics.core :refer :all]
             [mongerr.core :refer :all]
             [dora.p.ckan :refer :all]
             [dora.p.zendesk :refer :all]
@@ -53,6 +54,7 @@
           (update-db :adela-plans adela-plans)
           (update-db :adela-organizations adela-organizations)
           (update-db :adela-inventories adela-inventory)
+          (update-db :google_analytics download-data)
           (dc-update)]))
 
 (defn metricas

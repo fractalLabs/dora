@@ -11,6 +11,7 @@
                  [commons-lang/commons-lang "2.6"]
                  [com.novemberain/monger "3.0.1"]
                  [compojure "1.4.0"]
+                 [dgm-analytics "0.1.0-SNAPSHOT"]
                  [environ "1.0.2"]
                  [http-kit "2.1.18"]
                  [lib-noir "0.8.5"];"0.9.9"
