@@ -55,7 +55,8 @@
           (update-db :adela-organizations adela-organizations)
           (update-db :adela-inventories adela-inventory)
           (update-db :google_analytics download-data)
-          (dc-update)]))
+          (dc-update)
+          (println "finished updating")]))
 
 (defn metricas
   "Despliega las Métricas de Data Core"
