@@ -10,7 +10,8 @@
             [dora.util :refer :all]
             [nillib.formats :refer :all]
             [nillib.text :refer :all]
-            [nillib.worm :refer :all]))
+            [nillib.worm :refer :all]
+            [ring.util.codec :as c]))
 
 (defn shsh
   "Execute command in shell"
