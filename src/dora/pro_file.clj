@@ -264,7 +264,8 @@
 (defn analytics
   "get the stored google analytics history"
   [url]
-  (:value (db-findf :google_analytics {:url (c/url-encode url)})))
+  (try (:value (db-findf :google_analytics {:url (c/url-encode url)}))
+       (catch java.lang.NullPointerException e)))
 
 (defn dora-view [result]
   (let [url (:url result)
