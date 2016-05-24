@@ -309,20 +309,21 @@
     (mapcat flatten-inventory-dataset datasets)))
 
 (defn dora-view-inventory    ;will expect entries from inventory-resources-denormalized
-  ([] (map #(try (dora-view-inventory %) (catch Exception e)) (inventory-resources-denormalized)))
+  ([] (map dora-view-inventory (inventory-resources-denormalized)))
   ([result]
-   (let [url (:downloadURL (:resource result))
-         resource (resource url)
-         dataset (dataset resource)
-         metadata (format-metadatas (apply merge
-                                           (map #(hash-map (:meta %) (:data %))
-                                                (:metadata (db-findf :dora {:url url})))))]
-     (assoc result
-            :resource resource
-            :dataset (dissoc dataset :resources)
-            :analytics {:downloads {:total (analytics url)}}
-            :file-metadata metadata
-            :recommendations (remove string? (recommendations url metadata (:resource result)))))))
+   (try (let [url (:downloadURL (:resource result))
+              resource (resource url)
+              dataset (dataset resource)
+              metadata (format-metadatas (apply merge
+                                                (map #(hash-map (:meta %) (:data %))
+                                                     (:metadata (db-findf :dora {:url url})))))]
+          (assoc result
+                 :resource resource
+                 :dataset (dissoc dataset :resources)
+                 :analytics {:downloads {:total (analytics url)}}
+                 :file-metadata metadata
+                 :recommendations (remove string? (recommendations url metadata (:resource result)))))
+        (catch Exception e (println "Exception: e")))))
 
 (defn save-fusion
   ([] (save-fusion (db :resources)))
@@ -337,6 +338,14 @@
    (map #(try (db-insert :fusion_inventory (dora-view-inventory %))
               (catch Exception e (db-insert :errors_fusion_inventory (assoc % :exception (str e)))))
         results)))
+
+(defn json-fusion-inventory []
+  (let [rsrcs (inventory-resources-denormalized)
+        n (count rsrcs)]
+    (spit "data-fusion.json"
+          (json (remove-nils (map #(try (dora-view-inventory %)
+                                        (catch Exception e))
+                                  rsrcs))))))
 
 (defn recommendations-to-send
   []
