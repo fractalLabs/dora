@@ -323,7 +323,7 @@
                  :analytics {:downloads {:total (analytics url)}}
                  :file-metadata metadata
                  :recommendations (remove string? (recommendations url metadata (:resource result)))))
-        (catch Exception e (println "Exception: e")))))
+        (catch Exception e (println "Exception: " e)))))
 
 (defn save-fusion
   ([] (save-fusion (db :resources)))
