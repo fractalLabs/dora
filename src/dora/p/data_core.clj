@@ -46,7 +46,7 @@
       (db-insert coll (remove-nils (fn)))))
 
 (defn data-core []
-  (println (doall [(update-db :instituciones instituciones)
+  (doall [(update-db :instituciones instituciones)
                    (update-db :zendesk-tickets all-tickets)
                    (update-db :zendesk-organizations all-organizations)
                    (update-db :zendesk-satisfaction all-satisfaction)
@@ -57,8 +57,7 @@
                    (update-db :adela-inventories adela-inventory)
                    ;(update-db :google_analytics download-data)
                    (update-db :fusion_inventory dora-view-inventory)
-                   (dc-update)])
-           " finished updates"))
+                   (dc-update)]))
 
 (defn metricas
   "Despliega las Métricas de Data Core"
