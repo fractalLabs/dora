@@ -318,7 +318,7 @@
               metadata (format-metadatas (apply merge
                                                 (map #(hash-map (:meta %) (:data %))
                                                      (:metadata (db-findf :dora {:url url})))))]
-          (assoc result
+          (assoc {:adela result}
                  :resource resource
                  :dataset (dissoc dataset :resources)
                  :analytics {:downloads {:total (analytics url)}}
