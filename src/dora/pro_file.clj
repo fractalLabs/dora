@@ -320,7 +320,7 @@
      (assoc result
             :resource resource
             :dataset (dissoc dataset :resources)
-            :analytics (analytics url)
+            :analytics {:downloads {:total (analytics url)}}
             :file-metadata metadata
             :recommendations (remove string? (recommendations url metadata (:resource result)))))))
 
