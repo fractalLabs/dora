@@ -319,8 +319,8 @@
                                                 (map #(hash-map (:meta %) (:data %))
                                                      (:metadata (db-findf :dora {:url url})))))]
           (assoc {:adela result}
-                 :resource resource
-                 :dataset (dissoc dataset :resources)
+                 :ckan {:resource resource
+                        :dataset (dissoc dataset :resources)}
                  :analytics {:downloads {:total (analytics url)}}
                  :file-metadata metadata
                  :recommendations (remove string? (recommendations url metadata (:resource result)))))
