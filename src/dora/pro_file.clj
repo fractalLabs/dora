@@ -323,7 +323,8 @@
                         :dataset (dissoc dataset :resources)}
                  :analytics {:downloads {:total (analytics url)}}
                  :file-metadata metadata
-                 :recommendations (remove string? (recommendations url metadata (:resource result)))))
+                 :recommendations (remove string? (recommendations url metadata (:resource result)))
+                 :id (str (:id (:dataset result)))))
         (catch Exception e (println "Exception: " e)))))
 
 (defn save-fusion
