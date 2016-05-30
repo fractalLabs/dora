@@ -117,3 +117,10 @@
   [o]
   (try (or* (map map? o))
        (catch Exception e false)))
+
+(defn truthy?
+  "Is this truthy or falsley"
+  [o]
+  (if o
+    true
+    false))
