@@ -14,33 +14,39 @@
 
 (def zen-auth {:basic-auth [(env :zendesk-email) (env :zendesk-password)]})
 
+(def content-json {:headers {"Content-Type" "application/json"}})
+
+(defn zen-headers [& maps]
+  (apply merge zen-auth))
+
 (defn handle-response [{:keys [status headers body error]}]
   (if error
     (println "Failed, exception is " error)
     (json/read-str body :key-fn keyword)))
 
+(defn request-url [& s]
+  (str "https://mxabierto.zendesk/api/v2/" (apply str s) ".json"))
+
 (defn request
   [endpoint]
-    (client/get (str "https://mxabierto.zendesk.com/api/v2/" endpoint ".json")
-                {:basic-auth [(env :zendesk-email) (env :zendesk-password)]}
+    (client/get (request-url endpoint ".json")
+                zen-auth
                 handle-response))
 
 (defn create-user
   ([name email] (create-user name email {}))
   ([name email map-to-merge]
-    (client/post (str "https://mxabierto.zendesk.com/api/v2/users.json")
-                 {:basic-auth [(env :zendesk-email) (env :zendesk-password)]
-                  :headers {"Content-Type" "application/json"}
-                  :body (json/write-str {:user (merge {:name name :email email :verified true}
-                                                      map-to-merge)})}
+   (client/post (request-url "users")
+                (zen-headers content-json
+                             {:body (json/write-str {:user (merge {:name name :email email :verified true}
+                                                                  map-to-merge)})})
       handle-response)))
 
 (defn update-user
   [user-id new-data]
-    (client/put (str "https://mxabierto.zendesk.com/api/v2/users/" user-id ".json")
-                {:basic-auth [(env :zendesk-email) (env :zendesk-password)]
-                 :headers {"Content-Type" "application/json"}
-                 :body (json/write-str {:user new-data})}
+  (client/put (request-url "users/" user-id)
+              (zen-headers content-json
+                           {:body (json/write-str {:user new-data})})
       handle-response))
 
 (defn ticket
@@ -64,7 +70,7 @@
   ([] (tickets "https://mxabierto.zendesk.com/api/v2/tickets.json"))
   ([url]
     (client/get url
-                {:basic-auth [(env :zendesk-email) (env :zendesk-password)]}
+                zen-auth
                 handle-response)))
 
 (defn all-tickets []
@@ -106,17 +112,20 @@
 (defn attachments
   ([url]
     (client/get "https://mxabierto.zendesk.com/api/v2/attachments/401.json"
-                {:basic-auth [(env :zendesk-email) (env :zendesk-password)]}
+                zen-auth
                 (fn [{:keys [status headers body error]}]
                   (if error
                     (println "Failed, exception is " error)
                     (json/read-str body :key-fn keyword))))))
 
+(defn zen-api
+  [endpoint-name])
+
 (defn organizations
   ([] (organizations "https://mxabierto.zendesk.com/api/v2/organizations.json"))
   ([url]
     (client/get url
-                {:basic-auth [(env :zendesk-email) (env :zendesk-password)]}
+                zen-auth
                 (fn [{:keys [status headers body error]}]
                   (if error
                     (println "Failed, exception is " error)
@@ -134,7 +143,7 @@
   ([] (users "https://mxabierto.zendesk.com/api/v2/users.json"))
   ([url]
     (client/get url
-                {:basic-auth [(env :zendesk-email) (env :zendesk-password)]}
+                zen-auth
                 (fn [{:keys [status headers body error]}]
                   (if error
                     (println "Failed, exception is " error)
