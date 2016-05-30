@@ -16,6 +16,7 @@
             [dora.core :refer :all]
             [dora.data :refer :all]
             [dora.pro-file :refer :all]
+            [dora.util :refer :all]
             [mongerr.core :refer :all]
             [nillib.formats :refer :all]))
 
@@ -24,11 +25,6 @@
   {:status (or status 200)
    :headers {"Content-Type" "application/CSV"}
    :body (pr-str data)})
-
-(defn map-vals
-  "Apply f to the values of m"
-  [f m]
-  (zipmap (keys m) (map f (vals m))))
 
 (defn numerable?
   "Does this string represent numbers?"
@@ -44,6 +40,12 @@
                :else %)
             params))
 
+(defn collection-endpoint
+  "this is used for showing collection data"
+  [params]
+  (println (:collection params) " " (dissoc params :collection))
+  (json (db-find (:collection params)
+                 (parse-strings (dissoc params :collection)))))
 (def app-routes
   [(ANY "/" [:as {params :params}]
         (do (println "Request: " params)
@@ -57,13 +59,9 @@
    (ANY "/resource" [& params]
         (slurp (data-directory (:id (db-findf :resources params)))))
    (GET "/db" [& params]
-        (println (:collection params) (dissoc params :collection))
-        (json (db-find (:collection params)
-                       (parse-strings (dissoc params :collection)))))
+        (collection-endpoint params))
    (GET "/db/:collection" [& params]
-        (println "? o que " params)
-        (json (db-find (:collection params)
-                       (parse-strings (dissoc params :collection)))))
+        (collection-endpoint params))
    (ANY "/csv" [:as {params :params}]
         (-> params
             :expr

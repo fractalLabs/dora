@@ -130,7 +130,7 @@
   (try
     (if (re-find url-regex url)
       (let [file-name (str "/tmp/" (rand))
-            tmp (spit file-name (GET url))]
+            tmp (spit file-name (clean-get url))]
         file-name)
       url)
     (catch Exception e)))
@@ -421,8 +421,6 @@
 (defn pa-arriba [m k]
   (dissoc (apply merge m (m k)) k))
 
-(defn apply-to-vals [f m]
-  (zipmap (keys m) (map f (vals m))))
 (defn trim-vals [m]
   (zipmap (keys m) (map s/trim (vals m))))
 
@@ -439,7 +437,7 @@
         p (pa-arriba p :size)
         p (pa-arriba p :aditional_info)
         p (pa-arriba p :encoding)
-        p (assoc (apply-to-vals #(remove-str % (:file_name p)) p)
+        p (assoc (map-vals #(remove-str % (:file_name p)) p)
                  :id (remove-str (:file_name p) "../../resources/"))]
     (trim-vals p)))
 

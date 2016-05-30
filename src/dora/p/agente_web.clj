@@ -244,21 +244,26 @@
                   (check-broken-curl-status (map :url (errors-today))))))
 
 (defn broken
-  "Endpoint with clear broken urls today"
-  []
-  (distinct (filter #(not (ok-curl-status (:status %)))
-                    (db-find "status-broken"))))
+  "Endpoint with clear broken urls"
+  ([]
+   (broken nil))
+  ([query]
+   (distinct (filter #(not (ok-curl-status (:status %)))
+                     (db-find "status-broken" query)))))
 
-(defn broken-today ([] (filter #(t/before? (t/minus (t/now)
-                                                    (t/days 1))
-                                           (:now %))
-                               (broken)))
+(defn last-day?
+  "Is t more recent than 24h ago?"
+  [t]
+  (t/before? (t/minus (t/now)
+                      (t/days 1))
+             t))
+
+(defn broken-today
+  ([] (filter #(last-day? (:now %))
+              (broken)))
   ([url]
-   (first (filter #(t/before? (t/minus (t/now)
-                                       (t/days 1))
-                              (:now %))
-                  (distinct (filter #(not (ok-curl-status (:status %)))
-                                    (db-find "status-broken" {:url url})))))))
+   (first (filter #(last-day? (:now %))
+                  (broken {:url url})
 
 (defn sure-errors []
  (map :url (broken-today)))

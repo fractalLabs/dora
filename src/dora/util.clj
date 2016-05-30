@@ -98,7 +98,7 @@
   [s]
   (eval (read-string s)))
 
-(defn GET
+(defn clean-get
   [url]
   (:body (http/get url)))
 
@@ -124,3 +124,8 @@
   (if o
     true
     false))
+
+(defn map-vals
+  "Apply f to the values of m"
+  [f m]
+  (zipmap (keys m) (map f (vals m))))
