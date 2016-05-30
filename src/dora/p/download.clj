@@ -56,7 +56,7 @@
       url))
 
 (defn fix-google-urls [recursos]
-  (map #(assoc % :url (fix-google-url (:url %))) recursos))
+  (map #(update-in % [:url] fix-google-url)))
 
 (defn resources-to-download
   []

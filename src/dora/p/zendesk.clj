@@ -2,6 +2,7 @@
   "Zendesk API wrapper"
   (:require [org.httpkit.client :as client]
             [clojure.data.json :as json]
+            [clojure.string :as s]
             [clj-pdf.core :refer :all]
             [clj-time.format :as f]
             [clj-time.core :as t]
@@ -26,7 +27,7 @@
     (json/read-str body :key-fn keyword)))
 
 (defn request-url [& s]
-  (str "https://mxabierto.zendesk/api/v2/" (apply str s) ".json"))
+  (str "https://mxabierto.zendesk/api/v2/" (s/join s) ".json"))
 
 (defn request
   [endpoint]
