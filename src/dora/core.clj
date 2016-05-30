@@ -1,4 +1,5 @@
 (ns dora.core
+  "Core processing engine, clojail and rest"
   (:require [cemerick.friend :as friend]
             [clojail.core :refer [sandbox]]
             [clojail.jvm :refer :all]

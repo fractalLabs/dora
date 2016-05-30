@@ -1,4 +1,5 @@
 (ns dora.p.ckan
+  "Wrapper for parts of CKAN API"
   (:require [clj-http.client :as http]
             [clj-http.util :refer :all]
             [clojure.data.json :as json]

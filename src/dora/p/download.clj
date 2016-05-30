@@ -1,4 +1,5 @@
 (ns dora.p.download
+  "Downloading datasets"
   (:require [clojure.java.io :as io]
             [clojure.java.shell :refer :all]
             [clojure.string :as s]

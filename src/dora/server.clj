@@ -1,4 +1,5 @@
 (ns dora.server
+  "Ring server, main XHR api"
   (:require [cemerick.friend :as friend]
             (cemerick.friend [workflows :as workflows]
                              [credentials :as creds])

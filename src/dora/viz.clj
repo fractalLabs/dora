@@ -1,4 +1,5 @@
 (ns dora.viz
+  "Data structure transformation for usage in front ends"
   (:require [nillib.formats :refer :all]))
 
 (defn cloud [vecs]

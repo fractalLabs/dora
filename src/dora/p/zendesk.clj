@@ -1,4 +1,5 @@
 (ns dora.p.zendesk
+  "Zendesk API wrapper"
   (:require [org.httpkit.client :as client]
             [clojure.data.json :as json]
             [clj-pdf.core :refer :all]

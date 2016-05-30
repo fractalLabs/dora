@@ -1,4 +1,5 @@
 (ns dora.repl
+  "Main entry point for repl use"
   (:require [cemerick.friend :as friend]
             (cemerick.friend [workflows :as workflows]
                              [credentials :as creds])

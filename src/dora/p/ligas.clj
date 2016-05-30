@@ -1,4 +1,5 @@
 (ns dora.p.ligas
+  "Some functions for searching stored broken links"
   (:require [clj-http.client :as http]
             [clj-time.core :as t]
             [clj-time.format :as f]
@@ -11,8 +12,8 @@
   (:gen-class))
 
 (defn ligas-caidas
-  ([] (db-find "ligas-caidas"))
-  ([day] (db-find "ligas-caidas" {:time {$gte (t/date-time (t/year day)
+  ([] (db-find :ligas-caidas))
+  ([day] (db-find :ligas-caidas {:time {$gte (t/date-time (t/year day)
                                                            (t/month day)
                                                            (t/day day))}})))
 

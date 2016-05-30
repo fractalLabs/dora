@@ -1,4 +1,5 @@
 (ns dora.twitter
+  "Stuff for searching and parsing twitter data"
   (:require [clojure.java.shell :refer :all]
             [mongerr.core :refer :all]
             [dora.util :refer :all]

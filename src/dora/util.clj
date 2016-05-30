@@ -1,4 +1,5 @@
 (ns dora.util
+  "Various utility functions"
   (:require [clojure.java.io :as io]
             [clojure.java.shell :refer :all]
             [clojure.string :as s]

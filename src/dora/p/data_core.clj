@@ -1,4 +1,5 @@
 (ns dora.p.data-core
+  "Copy and update the collections that are used in data fusion"
   (:require [clojure.set :refer :all]
             [clojure.string :as s]
             ;[dgm-analytics.core :refer :all]
@@ -10,7 +11,8 @@
             [nillib.formats :refer :all]
             [nillib.worm :refer :all]))
 
-(defn dc-add-query [campo value-fn]
+(defn dc-add-query
+  [campo value-fn]
   (db-update :data-core
              {:campo campo}
              {:query-en-data-core value-fn}))

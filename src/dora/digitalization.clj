@@ -1,5 +1,5 @@
 (ns dora.digitalization
-  "Conección a BD"
+  "Digitalization of dates"
   (:require [clj-time.format :as f]
             [clj-time.core :as t]
             [mongerr.core :refer :all]
