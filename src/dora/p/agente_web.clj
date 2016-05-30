@@ -5,13 +5,13 @@
             [clojure.java.shell :as sh]
             [clojure.set :as set]
             [clojure.string :as s]
-            [mongerr.core :refer :all]
             [dora.p.zendesk :refer :all]
             [monger.operators :refer :all]
-            monger.joda-time)
-  (:use nillib.formats
-        postal.core
-        ring.util.codec)
+            monger.joda-time
+            [mongerr.core :refer :all]
+            [nillib.formats :refer :all]
+            [postal.core :refer :all]
+            [ring.util.codec :refer :all])
   (:gen-class))
 
 (defn error
@@ -102,7 +102,7 @@
 (defn save-failures
   "Save failures on db"
   [failures]
-  (db-upsert :ligas-caidas
+  (db-insert :ligas-caidas
              {:time (t/now)
               :urls (map #(select-keys % [:organization :url])
                          failures)}))

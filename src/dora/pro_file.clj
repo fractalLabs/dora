@@ -187,7 +187,7 @@
 (defn duplicated-url-recommendation
   "Checks if there are more than one resource with this url"
   [url]
-  (if (> (count (re-find :resources {:url url})))
+  (if (> (count (re-find :resources {:url url})) 1)
     {:name "Hay mas de un recurso de datos con esta URL"
      :description "No es necesario que los mismos datos estén dados de alta mas de una vez. Revisar otras áreas, o dependencias que tengan estos datos publicados."
      :clave "c42"}))
@@ -464,10 +464,6 @@
 (defn conteo-por-llave [ms]
   (zipmap (keys (first ms))
           (map #(count (distinct (map % (json (json ms))))) (keys (first ms)))))
-
-(defn frequencies-peek [v]
-  (take 20 (sorted-frequencies v)))
-
 
 (defn frequencies-peek [v]
   (take 20 (sorted-frequencies v)))

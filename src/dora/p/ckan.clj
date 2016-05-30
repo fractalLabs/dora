@@ -1,15 +1,15 @@
 (ns dora.p.ckan
-  (:use clj-http.util
-        nillib.formats
-        nillib.worm)
   (:require [clj-http.client :as http]
+            [clj-http.util :refer :all]
             [clojure.data.json :as json]
             [clojure.string :as s]
             [mongerr.core :refer :all]
             [monger.core :as mg]
             [monger.collection :as mc]
             [monger.operators :refer :all]
-            monger.joda-time)
+            monger.joda-time
+            [nillib.formats :refer :all]
+            [nillib.worm :refer :all])
   (:import [com.mongodb MongoOptions ServerAddress]))
 
 (defn get-json [url]

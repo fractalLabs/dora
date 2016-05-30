@@ -1,7 +1,7 @@
 (ns dora.core
-  (:use clojail.jvm)
   (:require [cemerick.friend :as friend]
             [clojail.core :refer [sandbox]]
+            [clojail.jvm :refer :all]
             [clojail.testers :refer :all]
             [clojure.set :refer :all]
             [clojure.stacktrace :refer [print-cause-trace]]

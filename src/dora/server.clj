@@ -1,8 +1,8 @@
 (ns dora.server
-  (:use compojure.core)
   (:require [cemerick.friend :as friend]
             (cemerick.friend [workflows :as workflows]
                              [credentials :as creds])
+            [compojure.core :refer :all]
             [compojure.route :as route]
             monger.json
             [noir.util.middleware :as nm]

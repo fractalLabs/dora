@@ -1,14 +1,14 @@
 (ns dora.p.download
-  (:use dora.p.ckan
-        clojure.java.shell
-        nillib.formats
-        nillib.worm)
   (:require [clojure.java.io :as io]
+            [clojure.java.shell :refer :all]
             [clojure.string :as s]
             [dora.data :refer :all]
-            [mongerr.core :refer :all]
+            [dora.p.ckan :refer :all]
             [dora.util :refer :all]
             [monger.operators :refer :all]
+            [mongerr.core :refer :all]
+            [nillib.formats :refer :all]
+            [nillib.worm :refer :all]
             [org.httpkit.client :as http]))
 
 (defn tmpdir

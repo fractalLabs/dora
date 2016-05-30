@@ -3,12 +3,11 @@
             [clj-time.core :as t]
             [clj-time.format :as f]
             [clojure.string :as s]
+            [dora.p.zendesk :refer :all]
             [monger.operators :refer :all]
-            monger.joda-time)
-  (:use dora.p.zendesk
-        mongerr.core
-        nillib.formats
-        ring.util.codec)
+            monger.joda-time
+            [mongerr.core :refer :all]
+            [ring.util.codec :refer :all])
   (:gen-class))
 
 (defn ligas-caidas

@@ -41,9 +41,9 @@
   (let [d (drive)]
     (map #(dissoc % :slug) (join (:instituciones d) (:ipda d) {:siglas :slug}))))
 
-(defn update-db [coll fn]
+(defn update-db [coll f]
   (do (db-delete coll)
-      (db-insert coll (remove-nils (fn)))))
+      (db-insert coll (remove-nils (f)))))
 
 (defn data-core []
   (doall [(update-db :instituciones instituciones)

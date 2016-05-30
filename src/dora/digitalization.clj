@@ -13,9 +13,6 @@
             [nillib.tipo :refer :all]
             [nillib.worm :refer :all]))
 
-(defn date-tokens [s]
-  (re-seq #""))
-
 (defn char-type-regex [s]
   (if (re-find #"\d" s)
     "\\d"

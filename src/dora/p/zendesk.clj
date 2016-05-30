@@ -1,14 +1,14 @@
 (ns dora.p.zendesk
-  (:use clj-zendesk.core
-        nillib.formats
-        nillib.text)
   (:require [org.httpkit.client :as client]
             [clojure.data.json :as json]
             [clj-pdf.core :refer :all]
             [clj-time.format :as f]
             [clj-time.core :as t]
+            [clj-zendesk.core :refer :all]
             [environ.core :refer [env]]
-            [mongerr.core :refer :all]))
+            [mongerr.core :refer :all]
+            [nillib.formats :refer :all]
+            [nillib.text :refer :all]))
 
 (setup "mxabierto" (env :zendesk-email) (env :zendesk-password))
 
