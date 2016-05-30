@@ -33,7 +33,9 @@
   []
   (:identity (friend/current-authentication)))
 
-(defn my-fns []
+(defn my-fns
+  "Get the list of custom functions for current user"
+  []
   (:fns (first (db-find "users" {:username (:identity (friend/current-authentication))}))))
 
 (def ^{:doc "A tester that attempts to be secure, and allows def and threads."}
@@ -176,7 +178,8 @@
          :collection (if-let [coll (re-find #"\*\*Collection: .*\n" (str out))]
                        (trim (re-find #" .*$" coll)))}))))
 
-(defn replace-nil [expr replacement]
+(defn replace-nil
+  [expr replacement]
   (if (nil? expr)
       replacement
       expr))

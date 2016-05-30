@@ -272,7 +272,9 @@
         resource (resource url)
         dataset (dataset resource)
         catalog (find-catalog-by-dataset-name (:title dataset))
-        catalog-dataset (first (find-rel :title (:title dataset) (:dataset catalog)))
+        catalog-dataset (first (find-rel :title
+                                         (:title dataset)
+                                         (:dataset catalog)))
         metadata (format-metadatas (apply merge
                                           (map #(hash-map (:meta %) (:data %))
                                                (:metadata result))))]
@@ -284,7 +286,8 @@
                                                 (:name resource)
                                                 (:distribution catalog-dataset)))
      :file-metadata metadata
-     :recommendations (remove string? (recommendations url metadata resource))}))
+     :recommendations (remove string?
+                              (recommendations url metadata resource))}))
 
 (def fusion dora-view)
 
@@ -315,15 +318,17 @@
    (try (let [url (:downloadURL (:resource result))
               resource (resource url)
               dataset (dataset resource)
-              metadata (format-metadatas (apply merge
-                                                (map #(hash-map (:meta %) (:data %))
-                                                     (:metadata (db-findf :dora {:url url})))))]
+              metadata (format-metadatas
+                        (apply merge
+                               (map #(hash-map (:meta %) (:data %))
+                                    (:metadata (db-findf :dora {:url url})))))]
           (assoc {:adela result}
                  :ckan {:resource resource
                         :dataset (dissoc dataset :resources)}
                  :analytics {:downloads {:total (analytics url)}}
                  :file-metadata metadata
-                 :recommendations (remove string? (recommendations url metadata (:resource result)))
+                 :recommendations (remove string?
+                                          (recommendations url metadata (:resource result)))
                  :id (str (:id (:dataset result)))))
         (catch Exception e (println "Exception: " e)))))
 
@@ -331,14 +336,16 @@
   ([] (save-fusion (db :resources)))
   ([resources]
    (map #(try (db-insert :fusion (dora-view %))
-              (catch Exception e (db-insert :fusion_errors (assoc % :exception (str e)))))
+              (catch Exception e (db-insert :fusion_errors
+                                            (assoc % :exception (str e)))))
         resources)))
 
 (defn save-fusion-inventory
   ([] (save-fusion-inventory (inventory-resources-denormalized)))
   ([results]
    (map #(try (db-insert :fusion_inventory (dora-view-inventory %))
-              (catch Exception e (db-insert :errors_fusion_inventory (assoc % :exception (str e)))))
+              (catch Exception e (db-insert :errors_fusion_inventory
+                                            (assoc % :exception (str e)))))
         results)))
 
 (defn json-fusion-inventory []
@@ -433,12 +440,14 @@
   (let [o (dissoc profile :profile)
         p (zipmap (map :meta (:profile profile))
                   (map :data (:profile profile)))
-        p (apply merge p (:metadata (json (remove-st-err (p "validaciones/IDMX/code/prep_proc.sh")))))
+        p (apply merge
+                 p (:metadata (json (remove-st-err (p "validaciones/IDMX/code/prep_proc.sh")))))
         p (dissoc p "validaciones/IDMX/code/prep_proc.sh" "head -n 1")
         p (pa-arriba p :size)
         p (pa-arriba p :aditional_info)
         p (pa-arriba p :encoding)
-        p (assoc (apply-to-vals #(remove-str % (:file_name p)) p) :id (remove-str (:file_name p) "../../resources/"))]
+        p (assoc (apply-to-vals #(remove-str % (:file_name p)) p)
+                 :id (remove-str (:file_name p) "../../resources/"))]
     (trim-vals p)))
 
 ;remove strings identicas al file name:
@@ -453,7 +462,8 @@
 
                                         ;estudio
 (defn conteo-por-llave [ms]
-  (zipmap (keys (first ms)) (map #(count (distinct (map % (json (json ms))))) (keys (first ms)))))
+  (zipmap (keys (first ms))
+          (map #(count (distinct (map % (json (json ms))))) (keys (first ms)))))
 
 (defn frequencies-peek [v]
   (take 20 (sorted-frequencies v)))

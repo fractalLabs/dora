@@ -29,7 +29,8 @@
 ;(ligas-repetidas (ligas-caidas desde-dia))
 
 (defn ligas-repetidas-3 []
-  (map first (filter #(< 2 (second %)) (ligas-repetidas (take-last 3 (sort-by :time (ligas-caidas)))))))
+  (map first (filter #(< 2 (second %))
+                     (ligas-repetidas (take-last 3 (sort-by :time (ligas-caidas)))))))
 
 (defn caidas-por-dependencia []
   (let [lr (ligas-repetidas-3)]

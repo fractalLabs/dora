@@ -31,7 +31,9 @@
 (defn date-checker
   "Check if this is consistent with a date"
   [s]
-  (remove-nils (map #(re-find (:regex %) s) (filter #(= (count s) (count (:sample %))) formatters))))
+  (remove-nils (map #(re-find (:regex %) s)
+                    (filter #(= (count s) (count (:sample %)))
+                            formatters))))
 
 (defn date-parse [s]
   (let [type (date-checker s)

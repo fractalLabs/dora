@@ -25,7 +25,9 @@
   (try
     (let [data (separate-lines (shs "unzip" "-l" file))
           rows (drop-last 2 (nthrest data 3))]
-      (remove ends-in-dash? (map #(s/trim (remove-str % #"[0-9]+  [0-9\-: ]+   ")) rows)))
+      (remove ends-in-dash?
+              (map #(s/trim (remove-str % #"[0-9]+  [0-9\-: ]+   "))
+                   rows)))
     (catch Exception e (print file e))))
 
 (defn filehead [file]
@@ -46,7 +48,8 @@
   (let [files (:files recurso)]
     (assoc recurso :files (map #(hash-map :name %
                                           :file (file (tmpdir (:id recurso) "/" %))
-                                          :head (cols (:id recurso) (tmpdir (:id recurso) "/" %)))
+                                          :head (cols (:id recurso)
+                                                      (tmpdir (:id recurso) "/" %)))
                                 files))))
 
 (defn recurso-CSV [recurso]

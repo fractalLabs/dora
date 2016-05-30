@@ -14,20 +14,27 @@
         ring.util.codec)
   (:gen-class))
 
-(defn error [& strs]
-  (do (println "error: " (s/join strs)) (spit "error-log.log" (str (s/join strs) "\n") :append true)))
+(defn error
+  "save to error-log.log"
+  [& strs]
+  (do (println "error: " (s/join strs))
+      (spit "error-log.log" (str (s/join strs) "\n") :append true)))
 
 (def user-agent
   "Mozilla/5.0 (X11; U; Linux x86_64; en-US) AppleWebKit/532.9 (KHTML, like Gecko) Chrome/5.0.307.11 Safari/532.9")
 
-(defn status-with-usr-agent [url]
+(defn status-with-usr-agent
+  "Get the status code for a resource while faking the user agent"
+  [url]
   (try
     (error "error 1: " url)
     (:status (http/get url {:headers {"user-agent"  user-agent}
                             :conn-timeout 6000}))
-    (catch org.apache.http.conn.ConnectTimeoutException e (db-insert :status {:now (t/now) :url url :status :timeout}))
-    (catch Exception e (let [request (db-insert :status {:now (t/now) :url url :status :error})]
-                        :error))))
+    (catch org.apache.http.conn.ConnectTimeoutException e
+      (db-insert :status {:now (t/now) :url url :status :timeout}))
+    (catch Exception e
+      (let [request (db-insert :status {:now (t/now) :url url :status :error})]
+        :error))))
 
 (defn status
   "Está online el recurso web?."
@@ -49,15 +56,22 @@
        (println "validated " (count statuses) " statuses")
     ))
 
-(defn trim-or-empty [s]
+(defn trim-or-empty
+  "Trim string but if it is not a string, then return empty string"
+  [s]
   (if (string? s)
       (s/trim s)
       ""))
 
-(defn status-curl [url]
-  (trim-or-empty (first (re-seq #"[^\n]+" (:out (sh/sh "curl" "-Is" url))))))
+(defn status-curl
+  "Resource status using curl"
+  [url]
+  (trim-or-empty (first (re-seq #"[^\n]+"
+                                (:out (sh/sh "curl" "-Is" url))))))
 
-(defn ok-curl-status [status]
+(defn ok-curl-status
+  "Is this status ok?"
+  [status]
   (if (string? status)
       (or (re-find #"200" status)
           (re-find #"301" status)
@@ -65,7 +79,9 @@
           (empty? status))
       false))
 
-(defn check-broken-curl-status [urls]
+(defn check-broken-curl-status
+  "Check the status of a list of urls"
+  [urls]
   (remove #(ok-curl-status (:status %))
           (pmap #(hash-map :status (status-curl %)
                            :url %)
@@ -73,14 +89,23 @@
 
 
 (defn check-urls
+  "Check a list of urls, store in :status collection"
   [urls]
   (pmap #(try (assoc % :status (status (:url %)))
-              (catch Exception e (db-insert "errors" {:now (t/now) :here "f.p.agente-web/check-urls" :exception (str e)})))
+              (catch Exception e
+                (db-insert "errors"
+                           {:now (t/now)
+                            :here "f.p.agente-web/check-urls"
+                            :exception (str e)})))
         urls))
 
-(defn save-failures [failures]
-  (db-upsert "ligas-caidas" {:time (t/now)
-                          :urls (map #(select-keys % [:organization :url]) failures)}))
+(defn save-failures
+  "Save failures on db"
+  [failures]
+  (db-upsert :ligas-caidas
+             {:time (t/now)
+              :urls (map #(select-keys % [:organization :url])
+                         failures)}))
 
 (defn failed-urls []
   ;las urls de hoy y las del dia anterior
@@ -109,21 +134,29 @@
             NOTA: El código que genera esta alerta puede contener errores, es indispensable validar manualmente una liga antes de reportar a una dependencia.
             En caso de encontrar errores en este informe, favor de contestar sobre este ticket."))
 
-(defn handle-failures [failures]
+(defn handle-failures
+  [failures]
   (if-not (empty? failures)
-    (let [without-false-negatives (remove #(= :timeout (:status %)) (remove #(re-find #"coneval" (:url %)) failures))]
+    (let [without-false-negatives (remove #(= :timeout (:status %))
+                                          (remove #(re-find #"coneval" (:url %))
+                                                  failures))]
       (csv "resources/failed-urls.csv" (sort-by :organization failures))
       (when (seq without-false-negatives)
-        (try (csv "resources/ligas-rotas.csv" (sort-by :organization failures)) (catch Exception e (error "Error 90" e)))
-        (try (save-failures (sort-by :organization failures)) (catch Exception e (error "Error 91" e)))
+        (try (csv "resources/ligas-rotas.csv"
+                  (sort-by :organization failures))
+             (catch Exception e (error "Error 90" e)))
+        (try (save-failures (sort-by :organization failures))
+             (catch Exception e (error "Error 91" e)))
         (try (ticket-downtime
                (str-reporte-downtime
                  (count failures)
-                 (count (distinct (map :organization failures))))) (catch Exception e (error "Error 92" e)))
+                 (count (distinct (map :organization failures)))))
+             (catch Exception e (error "Error 92" e)))
         ;(try (link-uptime-report) (catch Exception e (error "Error 96" e)))
         ))))
 
-(defn check [urls]
+(defn check
+  [urls]
   (let [checked (check-urls urls)
         all-failed (remove #(= 200 (:status %)) checked)]
     (csv "resources/checked-urls.csv" (sort-by :organization checked))
@@ -133,7 +166,8 @@
   (check (csv f)))
 
 
-(defn unchecked-resources []
+(defn unchecked-resources
+  []
 ; (check (db-find "resources"))) ;;TODO meter a la query solo los de hoy
   (let [already-checked (set (map :url (db-find :status)))]
     (remove #(set/subset? (set [(:url %)]) already-checked)
@@ -150,13 +184,16 @@
 ;(def urls-checadas (check-urls (db-find "resources")))
 
 (defn update-status [resource]
-  (db-upsert :resources (select-keys resource [:id]) {:status (status (:url resource))
-                                                      :check-status (t/now)}))
+  (db-upsert :resources
+             (select-keys resource [:id])
+             {:status (status (:url resource))
+              :check-status (t/now)}))
 
 (defn check-ckan-urls
   ([] (check-ckan-urls (db-find :resources)))
   ([resources]
-    (pmap #(try (update-status %) (catch Exception e (error "check-ckan-urls "e)))
+   (pmap #(try (update-status %)
+               (catch Exception e (error "check-ckan-urls "e)))
           resources)))
 
 ;(csv "error-list.csv" (db-find :resources {:status "error"}))
@@ -165,7 +202,8 @@
 
 ;enlaces y admins
 (defn email-admin [siglas-dependencia]
-  ((keyword "Correo Electrónico Administrador") (first (db-find "people" {:Siglas (s/upper-case siglas-dependencia)}))))
+  ((keyword "Correo Electrónico Administrador")
+   (first (db-find "people" {:Siglas (s/upper-case siglas-dependencia)}))))
 
 (defn e-mail [to subject body]
   (send-message {:host "smtp.gmail.com"
@@ -194,14 +232,15 @@
 
 (defn errors-today []
   (distinct (map #(select-keys % [:url :status])
-                                   (filter #(t/before? (t/today-at-midnight) (:now %))
-                                   (db-find :status {:status :error
-                                                     ;:time {$gte (t/today-at-midnight)}
-                                                    })))))
+                 (filter #(t/before? (t/today-at-midnight) (:now %))
+                         (db-find :status {:status :error })))))
+                       ;:time {$gte (t/today-at-midnight)}
+
 
 (defn save-broken-links []
-  (db-insert :status-broken (map #(assoc % :now (t/now))
-                                 (check-broken-curl-status (map :url (errors-today))))))
+  (db-insert :status-broken
+             (map #(assoc % :now (t/now))
+                  (check-broken-curl-status (map :url (errors-today))))))
 
 (defn broken
   "Endpoint with clear broken urls today"
@@ -245,7 +284,9 @@
     (csv-str (sort-by :organization out) (report-csv-keys out))))
 
 (defn prepare-errors [errors]
-  (sort-by :organization (pmap #(hash-map :url % :organization (url->org %)) errors)))
+  (sort-by :organization
+           (pmap #(hash-map :url % :organization (url->org %))
+                 errors)))
 
 (defn pack-errors [errors]
   (remove #(= "coneval" (:organization %))
