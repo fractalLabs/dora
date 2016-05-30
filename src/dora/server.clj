@@ -19,18 +19,24 @@
             [mongerr.core :refer :all]
             [nillib.formats :refer :all]))
 
-(defn generate-csv-response [data & [status]]
+(defn generate-csv-response
+  [data & [status]]
   {:status (or status 200)
    :headers {"Content-Type" "application/CSV"}
    :body (pr-str data)})
 
-(defn map-vals [f m]
+(defn map-vals
+  "Apply f to the values of m"
+  [f m]
   (zipmap (keys m) (map f (vals m))))
 
-(defn numerable? [s]
+(defn numerable?
+  "Does this string represent numbers?"
+  [s]
   (= s (re-find #"\A-?\d+" s)))
 
-(defn parse-strings [params]
+(defn parse-strings
+  [params]
   (map-vals #(cond
                (numerable? %) (Integer/parseInt %)
                (= "true" %) true
