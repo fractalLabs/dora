@@ -127,8 +127,9 @@
   "String preprocessing to be evaled.
    If the string-from is not enclosed by a data structure, it is enclosed in a vector"
   [expr]
-  (if (unenclosed-struc? expr) (str "[" expr "]")
-      expr))
+  (if (unenclosed-struc? expr)
+    (str "[" expr "]")
+    expr))
 
 (defn postproc
   "Post processing. The output is ensured to be a vector of maps"
