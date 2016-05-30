@@ -53,13 +53,6 @@
     (not= s num)
     false))
 
-(defn or*
-  "Apply or to a list of predicates"
-  [coll]
-  (if-let [t? (some true? coll)]
-    true
-    false))
-
 (defn has-weird-format-numbers?
   [rel]
   (or* (map number-weird-format? (vals (first rel)))))

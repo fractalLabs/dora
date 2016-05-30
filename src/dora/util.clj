@@ -107,4 +107,13 @@
   [k v rel]
   (keep #(if (= (k %) v) %) rel))
 
-;; Operating on maps and rels
+(defn or*
+  "Apply 'or' to a list of predicates"  ;Because u cant do
+  [coll]                                ; (apply or [true true])
+  (true? (some true? coll)))
+
+(defn rel?
+  "Is this a rel?"
+  [o]
+  (try (or* (map map? o))
+       (catch Exception e false)))
