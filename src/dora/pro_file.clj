@@ -401,17 +401,8 @@
                                         (catch Exception e))
                                   rsrcs))))))
 
-(defn recommendations-to-send
-  []
-  (let [fsn (map dora-view (db :resources))]
-    (filter #(seq (:recommendations %)) fsn)))
 
-(defn dissoc-non-essentials-4-rec
-  [fsn-m]
-  {:url (:url (:resource fsn-m))
-   :organization (:title (:organization (:dataset fsn-m)))
-   :recommendations (:recommendations fsn-m)})
-
+;;original validation engine
 (defn profile
   "if first time, run validations and store.
   For returning costumers return previous results"
@@ -452,52 +443,3 @@
     (if (is-directory? file-name)
       (profile-folder file-name)
       (profile file-name))))
-
-(defn main [file-name]
-  (println (json (validate file-name))))
-
-;; Scrapbook
-
-(defn pa-arriba [m k]
-  (dissoc (apply merge m (m k)) k))
-
-(defn trim-vals [m]
-  (zipmap (keys m) (map s/trim (vals m))))
-
-(defn remove-st-err [s]
-  (last (re-seq #"[^\n]+" s)))
-
-(defn format-profile [profile]
-  (let [o (dissoc profile :profile)
-        p (zipmap (map :meta (:profile profile))
-                  (map :data (:profile profile)))
-        p (apply merge
-                 p (:metadata (json (remove-st-err (p "validaciones/IDMX/code/prep_proc.sh")))))
-        p (dissoc p "validaciones/IDMX/code/prep_proc.sh" "head -n 1")
-        p (pa-arriba p :size)
-        p (pa-arriba p :aditional_info)
-        p (pa-arriba p :encoding)
-        p (assoc (map-vals #(remove-str % (:file_name p)) p)
-                 :id (remove-str (:file_name p) "../../resources/"))]
-    (trim-vals p)))
-
-;remove strings identicas al file name:
-
-(defn db-validadora [] (map format-profile (db-find :validadora)))
-
-(defn join-resources []
-  (let [v (db-validadora)
-        r (db-find :resources)]
-    (join v r {:id :id})))
-
-
-                                        ;estudio
-(defn conteo-por-llave [ms]
-  (zipmap (keys (first ms))
-          (map #(count (distinct (map % (json (json ms))))) (keys (first ms)))))
-
-(defn frequencies-peek [v]
-  (take 20 (sorted-frequencies v)))
-
-(defn recomendaciones [url]
-  (:recomendaciones (db-find :dora {:url url})))

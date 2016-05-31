@@ -75,7 +75,8 @@
    (ANY "/geo/:coll" [:as {params :params}]
         (do (db-insert :log (assoc params :tipo "geo-search"))
             (db-geo (:coll params)
-                    [(read-string (:longitude params)) (read-string (:latitude params))])))
+                    [(read-string (:longitude params))
+                     (read-string (:latitude params))])))
    (ANY "/text/:coll" [:as {params :params}]
         (do (db-insert :log (assoc params :tipo "text-search"))
             (db-text-search (:coll params) (:q params))))
@@ -116,10 +117,7 @@
    handler
    {:workflows [(workflows/interactive-form
                  :credential-fn credential-fn
-                 ;:login-failure-handler login-failure-handler
-                 :workflows  [(workflows/interactive-form)]
-                 )
-                ]}))
+                 :workflows  [(workflows/interactive-form)])]}))
 
 (def app (nm/app-handler app-routes
                          :middleware [wrap-params
@@ -129,12 +127,9 @@
                                       wrap-json-response
                                       wrap-json-body
                                       wrap-json-params
-                                      cors
-                                      ]
+                                      cors]
                          :formats [:json-kw :edn]))
 
-;(defn -main [port]
-;  (jetty/run-jetty app {:port (Long. port) :join? false}))
 (defn run
   ([] (run 5555))
   ([port] (jetty/run-jetty app {:port port})))

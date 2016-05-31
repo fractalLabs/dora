@@ -21,7 +21,6 @@
             [dora.p.adela :refer :all]
             [dora.p.data-core :refer :all]
             [dora.p.download :refer :all]
-            [dora.p.ligas :refer :all]
             [dora.pro-file :refer :all]
             [dora.util :refer :all]
             [dora.p.zendesk :refer :all]

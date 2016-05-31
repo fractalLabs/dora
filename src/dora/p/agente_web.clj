@@ -166,7 +166,6 @@
 (defn check-file [f]
   (check (csv f)))
 
-
 (defn unchecked-resources
   []
 ; (check (db-find "resources"))) ;;TODO meter a la query solo los de hoy
@@ -194,7 +193,7 @@
   ([] (check-ckan-urls (db-find :resources)))
   ([resources]
    (pmap #(try (update-status %)
-               (catch Exception e (error "check-ckan-urls "e)))
+               (catch Exception e (error "check-ckan-urls " e)))
           resources)))
 
 ;(csv "error-list.csv" (db-find :resources {:status "error"}))
@@ -267,43 +266,3 @@
 
 (defn sure-errors []
  (map :url (broken-today)))
-
-(defn days-with-downtime
-  "Filtra los dias en los que hubo downtime en la url"
-  [url daily-data]
-  (map #(time-format (:now %))
-       (filter #(= (:url %) url)
-               daily-data)))
-
-(defn report-csv-keys [out]
-  (let [k (disj (set (all-keys out)) :organization :url)]
-    (concat [:organization :url] (sort k))))
-
-(defn link-uptime-report []
-  (let [data (broken)
-        urls (distinct (map :url data))
-       ;out (map #(merge (days-with-downtime % data) (zipmap seq (repeat 1))) urls)]
-        out (map #(merge {:url % :organization (url->org %)}
-                         (zipmap (days-with-downtime % data)
-                                 (repeat 1)))
-                 urls)]
-    (csv-str (sort-by :organization out) (report-csv-keys out))))
-
-(defn prepare-errors [errors]
-  (sort-by :organization
-           (pmap #(hash-map :url % :organization (url->org %))
-                 errors)))
-
-(defn pack-errors [errors]
-  (remove #(= "coneval" (:organization %))
-  (map #(assoc % :email (email-admin (:organization %)))
-  (map #(hash-map :organization (first %)
-                  :urls (map :url (second %)))
-       (group-by :organization errors)))))
-
-(defn errors-to-alert []
-  (let [errors (pack-errors (prepare-errors (sure-errors)))]
-    (println (map :organization (filter #(nil? (:email %)) errors)))
-    (send-emails (remove #(nil? (:email %)) errors))))
-
-;(def b (map check-url (re-seq #"[^\n]+" (slurp "errors-11-03.txt"))))
