@@ -98,10 +98,12 @@
 (defn csv-engine
   "Run validations specific to CSV"
   [file]
-  (let [rel (csv file)]
-    (zipmap (map str csv-validations)
-            (map #(eval-csv-validation % rel)
-                 csv-validations))))
+  (try
+    (let [rel (csv file)]
+      (zipmap (map str csv-validations)
+              (map #(eval-csv-validation % rel)
+                   csv-validations)))
+    (catch Exception e {:error {:fn "csv-engine" :exception (str e)}})))
 
 (defn csv-engine-metadata
   "Run validations specific to CSV, returning hashmaps of meta and data"
