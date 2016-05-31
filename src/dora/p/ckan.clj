@@ -81,9 +81,9 @@
         ndata (count data)]
     (db-delete :datasets)
     (db-delete :resources)
-    (println "updated " (count (map #(db-insert "datasets" %) data)) "datasets")
+    (println "updated " (count (map #(db-insert :datasets %) data)) "datasets")
     (println "updated "
-         (count (map #(db-insert "resources" %)
+         (count (map #(db-insert :resources %)
                      (mapcat recursos-from-datasets data)))
          " resources")))
 

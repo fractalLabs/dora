@@ -20,7 +20,7 @@
   (data-directory (:id recurso)))
 
 (defn recursosdb []
-  (db-find "resources"))
+  (db-find :resources))
 
 (defn recursos-descargados []
   (ls (data-directory "")))
@@ -83,5 +83,5 @@
 
 (defn import-resources []
   (doall (pmap import-resource
-               (db-find "resources" {$or [{:imported {$exists false}}
+               (db-find :resources {$or [{:imported {$exists false}}
                                           {:imported false}]}))))

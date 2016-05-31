@@ -383,9 +383,9 @@
 (defn profile-folder
   "Run validations on all files from folder"
   [folder]
-  (doall (pmap #(try (db-insert :validadora
-                                {:file %
-                                 :profile (profile %)})
+  (doall (pmap #(try (db-upsert :file-profiles
+                                {:file %}
+                                {:profile (profile %) :file %})
                      (catch Exception e (db-insert :error
                                                    {:error (str e)})))
                (map (partial folder-file folder)
@@ -404,19 +404,7 @@
 (defn main [file-name]
   (println (json (validate file-name))))
 
-
-
-
 ;; Scrapbook
-
-(defn save-profiles [folder]
-  (doall (pmap #(try (db-upsert :file-profiles
-                                {:file %}
-                                {:profile (profile %) :file %})
-                     (catch Exception e (db-insert :error
-                                                   {:error (str e)})))
-               (map (partial folder-file folder)
-                    (remove is-directory? (ls folder))))))
 
 (defn pa-arriba [m k]
   (dissoc (apply merge m (m k)) k))

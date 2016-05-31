@@ -37,7 +37,7 @@
 (defn my-fns
   "Get the list of custom functions for current user"
   []
-  (:fns (first (db-find "users" {:username (:identity (friend/current-authentication))}))))
+  (:fns (db-findf :users {:username (:identity (friend/current-authentication))})))
 
 (def ^{:doc "A tester that attempts to be secure, and allows def and threads."}
   default-tester
@@ -152,13 +152,9 @@
 (defn sb
   "Find sandbox in session, or create one for repl use"
   []
-  (if-let [s (session/get "sb")]
-    (if (= (current-auth) (session/get "user"))
-      s
-      (do
-        (session/put! "sb" (make-sandbox))
-        (session/put! "user" (current-auth))
-        (session/get "sb")))
+  (let [s (session/get "sb")]
+    (if (and s (= (current-auth) (session/get "user"))))
+    s
     (do
       (session/put! "sb" (make-sandbox))
       (session/put! "user" (current-auth))

@@ -94,7 +94,7 @@
   [urls]
   (pmap #(try (assoc % :status (status (:url %)))
               (catch Exception e
-                (db-insert "errors"
+                (db-insert :errors
                            {:now (t/now)
                             :here "f.p.agente-web/check-urls"
                             :exception (str e)})))
@@ -199,12 +199,12 @@
 
 ;(csv "error-list.csv" (db-find :resources {:status "error"}))
 (defn url->org [url]
-  (:organization (first (db-find :resources {:url url}))))
+  (:organization (db-find :resources {:url url})))
 
 ;enlaces y admins
 (defn email-admin [siglas-dependencia]
   ((keyword "Correo Electrónico Administrador")
-   (first (db-find "people" {:Siglas (s/upper-case siglas-dependencia)}))))
+   (db-findf :people {:Siglas (s/upper-case siglas-dependencia)})))
 
 (defn e-mail [to subject body]
   (send-message {:host "smtp.gmail.com"
@@ -249,7 +249,7 @@
    (broken nil))
   ([query]
    (distinct (filter #(not (ok-curl-status (:status %)))
-                     (db-find "status-broken" query)))))
+                     (db-find :status-broken query)))))
 
 (defn last-day?
   "Is t more recent than 24h ago?"
