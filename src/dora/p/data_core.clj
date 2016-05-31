@@ -4,6 +4,7 @@
             [clojure.string :as s]
             ;[dgm-analytics.core :refer :all]
             [mongerr.core :refer :all]
+            [dora.p.adela :refer :all]
             [dora.p.ckan :refer :all]
             [dora.p.zendesk :refer :all]
             [dora.pro-file :refer :all]
