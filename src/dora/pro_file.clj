@@ -104,7 +104,7 @@
 (defn pprintfn
   "Pretty print a function"
   [fn-object]
-  (second (re-seq #"[^//]+" fn-object)))
+  (second (re-seq #"[^//]+" (str fn-object))))
 
 (defn csv-engine
   "Run validations specific to CSV"
