@@ -24,7 +24,6 @@
             [dora.p.ligas :refer :all]
             [dora.pro-file :refer :all]
             [dora.util :refer :all]
-            [dora.viz :refer :all]
             [dora.p.zendesk :refer :all]
             [environ.core :refer [env]]
             [nillib.text :refer :all]
