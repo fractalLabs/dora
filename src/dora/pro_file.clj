@@ -186,13 +186,14 @@
   ([names]
    (doall (pmap #(db-update :resource-metadata
                             {:id %}
-                            {:id %
-                             :metadata (process-validations (execute-validations (data-directory %) "csv"))})
+                            (assoc (process-validations (execute-validations (data-directory %) "csv")) :id %))
                 names)))
   ([]
    (validate-dgm (to-validate))))
 
 (defn validate-dgm-batched
+  ([]
+   (validate-dgm-batched (to-validate)))
   ([names] (loop [names names]
              (if (not (empty? names))
                (validate-dgm (take 100 names))
