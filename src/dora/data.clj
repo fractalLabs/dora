@@ -1,6 +1,7 @@
 (ns dora.data
   (:require [clojure.java.io :as io]
             [clojure.java.shell :as sh]
+            [clojure.set :refer :all]
             [clojure.string :as s]
             [clojure.zip :as zip]
             [environ.core :refer [env]]
@@ -41,6 +42,23 @@
 
 (defn mv-resource [id]
   (mv (data-directory id) (old-data-directory id)))
+
+(defn resource-ids []
+  (set (map :id (db :resources))))
+
+(defn file-names []
+  (set (ls (data-directory))))
+
+(defn old-files
+  "List all the files that are not currently associated
+  with a resource"
+  []
+  (difference (file-names) (resource-ids)))
+
+(defn mv-old-files
+ []
+ (map #(mv (data-directory %) (old-data-directory %))
+      (old-files)))
 
 (defn slurp-csv [url]
   (println "preparing to import: " url)
