@@ -151,13 +151,23 @@
                        (if (re-find #"csv|CSV" url)
                            (csv-engine-metadata file-name)))))
 
+(defn to-validate []
+  (difference (file-names) (set (map :id (db :resource-metadata)))))
+
 (defn validate-dgm
   ([names]
    (doall (pmap #(db-update :resource-metadata
                             {:id %}
                             {:id % :metadata (execute-validations (data-directory %) "csv")})
                 names)))
-  ([] (validate-dgm (difference (file-names) (set (map :id (db :resource-metadata)))))))
+  ([]
+   (validate-dgm (to-validate))))
+
+(defn validate-dgm-batched
+  ([names] (loop [names names]
+             (if (not (empty? names))
+               (validate-dgm (take 100 names))
+               (recur (drop 100 names))))))
 
 (defn format-metadatas [m]
   (identity m)) ;TODO: just a placeholder
