@@ -14,7 +14,6 @@
             [dora.core :refer :all]
             [mongerr.core :refer :all]
             [dora.server :refer :all]
-            [dora.twitter :refer :all]
             [dora.p.agente-web :refer :all]
             [dora.p.ckan :refer :all]
             [dora.data :refer :all]
