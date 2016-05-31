@@ -26,7 +26,7 @@
    "file"      ;file type, encoding
    "wc -l"     ;line count
    "du -h"     ;file size
-   "validaciones/IDMX/code/prep_proc.sh"
+   "validaciones/IDMX/code/prep_proc"
    "validaciones/repetidos" ;conteo de lineas repetidas
    ])
 
@@ -83,7 +83,9 @@
   [rel]
   (let [rel (rel-sample rel)
         ks (keys (first rel))]
-    (or* (map vec-has-mixed-formats (map (fn [k] (map k rel)) ks)))))
+    (or* (map vec-has-mixed-formats
+              (map (fn [k] (map k rel))
+                   ks)))))
 
 (def csv-validations
   "Vector of validations aplicable only to rels generated from CSV"
@@ -101,7 +103,7 @@
   "Run validations specific to CSV"
   [file]
   (try
-    (let [rel (take 1000 (csv file))]                       ;just a 1000 rows sample for performance
+    (let [rel (take 1000 (csv file))]          ;just a 1000 rows sample for performance
       (zipmap (map str csv-validations)
               (map #(eval-csv-validation % rel)
                    csv-validations)))
