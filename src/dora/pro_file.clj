@@ -149,7 +149,7 @@
 (defn trim-macugly-line
   "Take the first line whith line breaks as \r"
   [s]
-  (re-find #"[^r]+" s))
+  (re-find #"[^\r]+" s))
 
 (defn first-numbers
   "Take only the first numeric substring"
