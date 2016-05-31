@@ -146,10 +146,38 @@
                       (if (re-find #"csv|CSV" url)
                         (csv-engine file-name)))))
 
+(defn trim-macugly-line
+  "Take the first line whith line breaks as \r"
+  [s]
+  (re-find #"[^r]+" s))
+
+(defn first-numbers
+  "Take only the first numeric substring"
+  [s]
+  (re-find #"[0-9]+" s))
+
+(defn sfirst
+  "second first"
+  [coll]
+  (second (first coll)))
+
+(defn update-all-in
+  "update-in with each key and fn pair"
+  [m updates]
+  (loop [m m
+         updates updates]
+    (if (empty? updates)
+      m
+      (recur (update-in m [(ffirst updates)] (sfirst updates))
+             (rest updates)))))
+
 (defn process-validations
   "Post process validations, clean them and shit"
   [m]
-  m)
+  (update-all-in m {"head -n 1" trim-macugly-line
+                    "wc -l" first-numbers
+                    "du -h" first-numbers
+                    "validaciones/repetidos" first-numbers}))
 
 (defn to-validate []
   (difference (file-names) (set (map :id (db :resource-metadata)))))
