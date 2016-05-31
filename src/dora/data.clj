@@ -55,10 +55,13 @@
   []
   (difference (file-names) (resource-ids)))
 
-(defn mv-old-files
- []
- (map #(mv (data-directory %) (old-data-directory %))
-      (old-files)))
+(defn mv-old-file
+  ([file]
+   (mv (data-directory file)
+       (old-data-directory file)))
+  ([]
+   (map mv-old-file
+        (old-files))))
 
 (defn slurp-csv [url]
   (println "preparing to import: " url)
