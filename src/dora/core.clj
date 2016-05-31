@@ -8,7 +8,7 @@
             [clojure.stacktrace :refer [print-cause-trace]]
             [clojure.string :refer [trim]]
             [clojure.tools.logging :refer [info warn]]
-            [mongerr.core :refer [db-find db-text-search]]
+            [mongerr.core :refer [db-find db-findf db-text-search]]
             [nillib.tipo :refer :all]
             [noir.response :as resp]
             [noir.session :as session])
@@ -153,12 +153,12 @@
   "Find sandbox in session, or create one for repl use"
   []
   (let [s (session/get "sb")]
-    (if (and s (= (current-auth) (session/get "user"))))
-    s
-    (do
-      (session/put! "sb" (make-sandbox))
-      (session/put! "user" (current-auth))
-      (session/get "sb"))))
+    (if (and s (= (current-auth) (session/get "user")))
+      s
+      (do
+        (session/put! "sb" (make-sandbox))
+        (session/put! "user" (current-auth))
+        (session/get "sb")))))
 
 (defn eval-wrapper
   "Eval a string"
