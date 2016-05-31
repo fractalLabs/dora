@@ -106,9 +106,3 @@
   []
   (pmap #(process-recurso (id->recurso %)) (recursos-descargados)))
 )
-
-
-;(def a (recursosdb))
-;(defn the-knife [k v]
-;  (filter #(= v (k %))
-;          a))
