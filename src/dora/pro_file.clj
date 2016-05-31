@@ -138,14 +138,13 @@
 (defn execute-validations
   "Execution engine ;)"
   [file-name url]
-  (remove-nils (merge (map zipmap
-                            metas
-                            (pmap #(try                   ;(if (string? %)
-                                     (shsh % file-name)   ;    (% data))
-                                     (catch Exception e (str e)))
-                                  metas))
-                       (if (re-find #"csv|CSV" url)
-                           (csv-engine file-name)))))
+  (remove-nils (merge (zipmap metas
+                              (pmap #(try                   ;(if (string? %)
+                                       (shsh % file-name)   ;    (% data))
+                                       (catch Exception e (str e)))
+                                    metas))
+                      (if (re-find #"csv|CSV" url)
+                        (csv-engine file-name)))))
 
 (defn process-validations
   "Post process validations, clean them and shit"
