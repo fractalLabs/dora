@@ -50,8 +50,8 @@
   [(ANY "/" [:as {params :params}]
         (do (println "Request: " params)
             (repl-route params)))
-   (ANY "/validate" [& params]
-        (json (validate (:url params))))
+   ;(ANY "/validate" [& params]
+   ;     (json (validate (:url params))))
    (ANY "/fusion" [& params]
         (println "Params: " params)
         (println "Dora-view: " (dora-view params))

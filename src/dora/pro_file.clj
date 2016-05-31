@@ -20,15 +20,6 @@
   (let [result (sh "/bin/sh" "-c" (s/join " " command))]
     (str (:err result) (:out result))))
 
-(def metas
-  "Vector of 'validations' or scripts whose output we collect"
-  ["head -n 1" ;first line
-   "file"      ;file type, encoding
-   "wc -l"     ;line count
-   "du -h"     ;file size
-   "validaciones/IDMX/code/prep_proc"
-   "validaciones/repetidos" ;conteo de lineas repetidas
-   ])
 
 (defmacro try-catch [body]
   `(try
@@ -87,6 +78,16 @@
               (map (fn [k] (map k rel))
                    ks)))))
 
+(def metas
+  "Vector of 'validations' or scripts whose output we collect"
+  ["head -n 1" ;first line
+   "file"      ;file type, encoding
+   "wc -l"     ;line count
+   "du -h"     ;file size
+   "validaciones/IDMX/code/prep_proc"
+   "validaciones/repetidos" ;conteo de lineas repetidas
+   ])
+
 (def csv-validations
   "Vector of validations aplicable only to rels generated from CSV"
   [nils-csv-validation
@@ -109,19 +110,10 @@
                    csv-validations)))
     (catch Exception e {:csv-engine-error (str e)})))
 
-(defn dora-insert
-  "Insert a newly read url into db"
-  [url]
-  (db-insert :dora {:url url :active true}))
-
-(defn dora-update
-  "update results to a validated file"
-  [url results]
-  (db-update :dora {:url url} {:metadata results :active false}))
-
-(defn dora-find
-  [url]
-  (db-findf :dora {:url url}))
+(comment(defn dora-insert
+          "Insert a newly read url into db"
+          [url]
+          (db-insert :dora {:url url :active true})))
 
 (defn download-if-url
   "If name is a url, download and return relative path.
@@ -147,9 +139,15 @@
                         (csv-engine file-name)))))
 
 (defn trim-macugly-line
-  "Take the first line whith line breaks as \r"
+  "Take the first line whith line breaks as \r
+  whch are generated on old mac systems"
   [s]
   (re-find #"[^\r]+" s))
+
+(defn trimming
+  "Trim strings for head -n 1"
+  [s]
+  (s/join (take 500 (trim-macugly-line s))))
 
 (defn first-numbers
   "Take only the first numeric substring"
@@ -174,7 +172,7 @@
 (defn process-validations
   "Post process validations, clean them and shit"
   [m]
-  (update-all-in m {"head -n 1" trim-macugly-line
+  (update-all-in m {"head -n 1" trimming
                     "wc -l" first-numbers
                     "du -h" first-numbers
                     "validaciones/repetidos" first-numbers}))
@@ -198,9 +196,6 @@
              (if (not (empty? names))
                (validate-dgm (take 100 names))
                (recur (drop 100 names))))))
-
-(defn format-metadatas [m]
-  (identity m)) ;TODO: just a placeholder
 
 (defn broken-link-recommendation
   "If the URL was reported as broken today, raise this alert"
@@ -301,6 +296,11 @@
   [url]
   (db-findf :resources {:url url}))
 
+(defn resource-metadata
+  "Find stored metadata for a id"
+  [id]
+  (db-findf :resource-metadata {:id id}))
+
 (defn dataset
   "Given a Resource, return its dataset metadata"
   [resource]
@@ -320,9 +320,7 @@
         catalog-dataset (first (find-rel :title
                                          (:title dataset)
                                          (:dataset catalog)))
-        metadata (format-metadatas (apply merge
-                                          (map #(hash-map (:meta %) (:data %))
-                                               (:metadata result))))]
+        metadata (resource-metadata (:id resource))]
     {:resource resource
      :dataset (dissoc dataset :resources)
      :catalog (dissoc catalog :dataset)
@@ -363,10 +361,7 @@
    (try (let [url (:downloadURL (:resource result))
               resource (resource url)
               dataset (dataset resource)
-              metadata (format-metadatas
-                        (apply merge
-                               (map #(hash-map (:meta %) (:data %))
-                                    (:metadata (db-findf :dora {:url url})))))]
+              metadata (resource-metadata (:id resource))]
           (assoc {:adela result}
                  :ckan {:resource resource
                         :dataset (dissoc dataset :resources)}
@@ -401,14 +396,14 @@
                                         (catch Exception e))
                                   rsrcs))))))
 
-
+(comment
 ;;original validation engine
 (defn profile
   "if first time, run validations and store.
   For returning costumers return previous results"
   ([url] (profile url metas))
   ([url metas]
-   (if-let [result (dora-find url)]
+   (if-let [result (resource-metadata url)]
      (dora-view result)
      (let [tmp (dora-insert url)
            file-name (download-if-url url)
@@ -443,3 +438,4 @@
     (if (is-directory? file-name)
       (profile-folder file-name)
       (profile file-name))))
+)
