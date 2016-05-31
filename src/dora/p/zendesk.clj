@@ -21,34 +21,50 @@
 (defn zen-headers [& maps]
   (apply merge zen-auth))
 
-(defn handle-response [{:keys [status headers body error]}]
+(defn handle-response
+  "Parse the result and handle error responses"
+  [{:keys [status headers body error]}]
   (if error
     (println "Failed, exception is " error)
     (json/read-str body :key-fn keyword)))
 
-(defn request-url [& s]
-  (str "https://mxabierto.zendesk/api/v2/" (s/join s) ".json"))
-
 (defn request
+  "Make a request to an url"
+  [url]
+  (client/get url
+              zen-auth
+              handle-response))
+
+(defn zendesk-request-url
+  "Url request as a string"
   [endpoint]
-    (client/get (request-url endpoint ".json")
-                zen-auth
-                handle-response))
+  (str "https://mxabierto.zendesk.com/api/v2/" (name endpoint) ".json"))
+
+(defn zendesk-request
+  "Make a request to zendesk"
+  [endpoint]
+  (request (zendesk-request-url endpoint)))
+
+(defn json-body
+  "Make a map {:body JSON}"
+  [m]
+  {:body (json/write-str m)})
 
 (defn create-user
+  "Create a new zendesk user"
   ([name email] (create-user name email {}))
   ([name email map-to-merge]
-   (client/post (request-url "users")
+   (client/post (zendesk-request-url :users)
                 (zen-headers content-json
-                             {:body (json/write-str {:user (merge {:name name :email email :verified true}
-                                                                  map-to-merge)})})
+                             (json-body {:user (merge {:name name :email email :verified true}
+                                                                  map-to-merge)}))
       handle-response)))
 
 (defn update-user
   [user-id new-data]
-  (client/put (request-url "users/" user-id)
+  (client/put (zendesk-request-url (str "users/" user-id))
               (zen-headers content-json
-                           {:body (json/write-str {:user new-data})})
+                           (json-body {:user new-data}))
       handle-response))
 
 (defn ticket
@@ -67,21 +83,25 @@
 (defn read-tickets [data]
   (json/read-str (:body data) :key-fn keyword))
 
-
-(defn tickets
-  ([] (tickets "https://mxabierto.zendesk.com/api/v2/tickets.json"))
-  ([url]
-    (client/get url
-                zen-auth
-                handle-response)))
+(defn get-all-pages [endpoint]
+  (loop [curr (zendesk-request (name endpoint))
+         all []]
+    (if (:next_page @curr)
+      (recur (request (:next_page @curr))
+             (concat all (endpoint @curr)))
+      (concat all (endpoint @curr)))))
 
 (defn all-tickets []
-  (loop [t (tickets)
-         all []]
-    (if (:next_page @t)
-      (recur (tickets (:next_page @t))
-             (concat all (:tickets @t)))
-      (concat all (:tickets @t)))))
+  (get-all-pages :tickets))
+
+(defn all-organizations []
+  (get-all-pages :organizations))
+
+(defn all-satisfaction []
+  (get-all-pages :satisfaction_ratings))
+
+(defn all-users []
+  (get-all-pages :users))
 
 (defn due-tickets [ticks]
   (filter #(or (= "open" (:status %))
@@ -104,60 +124,14 @@
         ]
     (csv "Informe-Tickets-Resueltos.csv" t)))
 
-
 (defn gram-1 [tickets]
   (estudio-de-keywords (tickets-text tickets)))
 
 (defn gram-2 []
   (ngram-study 2 (tickets-text (all-tickets))))
 
-(defn attachments
-  ([url]
-    (client/get "https://mxabierto.zendesk.com/api/v2/attachments/401.json"
-                zen-auth
-                (fn [{:keys [status headers body error]}]
-                  (if error
-                    (println "Failed, exception is " error)
-                    (json/read-str body :key-fn keyword))))))
-
-(defn zen-api
-  [endpoint-name])
-
-(defn organizations
-  ([] (organizations "https://mxabierto.zendesk.com/api/v2/organizations.json"))
-  ([url]
-    (client/get url
-                zen-auth
-                (fn [{:keys [status headers body error]}]
-                  (if error
-                    (println "Failed, exception is " error)
-                    (json/read-str body :key-fn keyword))))))
-
-(defn all-organizations []
-  (loop [t (organizations)
-         all []]
-    (if (:next_page @t)
-      (recur (organizations (:next_page @t))
-             (concat all (:organizations @t)))
-      (concat all (:organizations @t)))))
-
-(defn users
-  ([] (users "https://mxabierto.zendesk.com/api/v2/users.json"))
-  ([url]
-    (client/get url
-                zen-auth
-                (fn [{:keys [status headers body error]}]
-                  (if error
-                    (println "Failed, exception is " error)
-                    (json/read-str body :key-fn keyword))))))
-
-(defn all-users []
-  (loop [t (users)
-         all []]
-    (if (:next_page @t)
-      (recur (users (:next_page @t))
-             (concat all (:users @t)))
-      (concat all (:users @t)))))
+(defn attachment
+  ([id] (zendesk-request (str "attachments/" id))))
 
 (defn end-users []
   (filter #(= "end-user" (:role %)) (all-users)))
@@ -168,24 +142,6 @@
 (def usrs (all-users))
 (defn user-data [id]
   (select-keys (first (filter #(= id (:id %)) usrs)) [:name :email]))
-
-(defn satisfaction
-  ([] (satisfaction "https://mxabierto.zendesk.com/api/v2/satisfaction_ratings.json"))
-  ([url]
-   (client/get url
-               zen-auth
-               (fn [{:keys [status headers body error]}]
-                 (if error
-                   (println "Failed, exception is " error)
-                   (json/read-str body :key-fn keyword))))))
-
-(defn all-satisfaction []
-  (loop [t (satisfaction)
-         all []]
-    (if (:next_page @t)
-      (recur (satisfaction (:next_page @t))
-             (concat all (:satisfaction_ratings @t)))
-      (remove #(= "offered" (:score %)) (concat all (:satisfaction_ratings @t))))))
 
 ;; Reportes
 (defn reporte-infotec [email month day]
