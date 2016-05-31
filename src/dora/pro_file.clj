@@ -43,7 +43,8 @@
         mini (apply min totals)]
     (if (> total 2)
       (if (> 3 mini)
-        true)
+        true
+        false)
       false)))
 
 (defn number-weird-format?
