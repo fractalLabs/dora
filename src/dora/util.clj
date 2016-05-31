@@ -52,6 +52,14 @@
   ([dir]
    (.list (io/file dir))))
 
+(defn mv
+  "move a file from a to b"
+  [a b]
+  (let [response (shs "mv" a b)]
+    (if (empty? response)
+      :ok
+      response)))
+
 (defn ends-in-dash? [s]
   (= \/ (last s)))
 

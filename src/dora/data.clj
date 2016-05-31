@@ -24,9 +24,23 @@
 (defn directory [& s]
   (apply str "/tmp/" s))
 
+(defn root-directory
+  "Root directory for file storage"
+  [& args]
+  (str "/var/lib/jenkins/" (s/join "/" args)))
+
 (defn data-directory
-  [s]
-  (str "/var/lib/jenkins/resources/" s))
+  "Directory for resources"
+  [& ss]
+  (apply root-directory "resources" ss))
+
+(defn old-data-directory
+  "Directory for old resources"
+  [& ss]
+  (apply root-directory "resources-old" ss))
+
+(defn mv-resource [id]
+  (mv (data-directory id) (old-data-directory id)))
 
 (defn slurp-csv [url]
   (println "preparing to import: " url)
