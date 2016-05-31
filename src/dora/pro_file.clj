@@ -2,6 +2,7 @@
   (:require [clj-http.client :as http]
             [clojure.java.io :as io]
             [clojure.java.shell :refer :all]
+            [clojure.repl :refer :all]
             [clojure.set :refer :all]
             [clojure.string :as s]
             [mongerr.core :refer :all]
@@ -100,12 +101,17 @@
   (try (f rel)
        (catch Exception e "error")))
 
+(defn pprintfn
+  "Pretty print a function"
+  [fn-object]
+  (second (re-seq #"[^//]+" fn-object)))
+
 (defn csv-engine
   "Run validations specific to CSV"
   [file]
   (try
     (let [rel (take 1000 (csv file))]          ;just a 1000 rows sample for performance
-      (zipmap (map str csv-validations)
+      (zipmap (map pprintfn csv-validations)
               (map #(eval-csv-validation % rel)
                    csv-validations)))
     (catch Exception e {:csv-engine-error (str e)})))
