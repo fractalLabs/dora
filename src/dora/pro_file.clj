@@ -107,13 +107,7 @@
       (zipmap (map str csv-validations)
               (map #(eval-csv-validation % rel)
                    csv-validations)))
-    (catch Exception e {:error {:fn "csv-engine" :exception (str e)}})))
-
-(defn csv-engine-metadata
-  "Run validations specific to CSV, returning hashmaps of meta and data"
-  [file]
-  (let [md (csv-engine file)]
-    (map #(hash-map :meta (first %) :data (second %)) md)))
+    (catch Exception e {:csv-engine-error (str e)})))
 
 (defn dora-insert
   "Insert a newly read url into db"
@@ -144,14 +138,19 @@
 (defn execute-validations
   "Execution engine ;)"
   [file-name url]
-  (remove-nils (concat (map #(hash-map :meta (str %1) :data %2)
+  (remove-nils (merge (map zipmap
                             metas
                             (pmap #(try                   ;(if (string? %)
                                      (shsh % file-name)   ;    (% data))
                                      (catch Exception e (str e)))
                                   metas))
                        (if (re-find #"csv|CSV" url)
-                           (csv-engine-metadata file-name)))))
+                           (csv-engine file-name)))))
+
+(defn process-validations
+  "Post process validations, clean them and shit"
+  [m]
+  m)
 
 (defn to-validate []
   (difference (file-names) (set (map :id (db :resource-metadata)))))
@@ -160,7 +159,8 @@
   ([names]
    (doall (pmap #(db-update :resource-metadata
                             {:id %}
-                            {:id % :metadata (execute-validations (data-directory %) "csv")})
+                            {:id %
+                             :metadata (process-validations (execute-validations (data-directory %) "csv"))})
                 names)))
   ([]
    (validate-dgm (to-validate))))
