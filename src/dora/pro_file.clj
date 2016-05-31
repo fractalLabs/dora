@@ -153,10 +153,10 @@
 
 (defn validate-dgm
   ([names]
-   (pmap #(db-update :resource-metadata
-                    {:id %}
-                    {:id % :metadata (execute-validations (data-directory %) "csv")})
-        names))
+   (doall (pmap #(db-update :resource-metadata
+                            {:id %}
+                            {:id % :metadata (execute-validations (data-directory %) "csv")})
+                names)))
   ([] (validate-dgm (difference (file-names) (set (map :id (db :resource-metadata)))))))
 
 (defn format-metadatas [m]
