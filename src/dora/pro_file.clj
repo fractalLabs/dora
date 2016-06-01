@@ -101,8 +101,6 @@
   (try (f rel)
        (catch Exception e "error")))
 
-
-
 (defn csv-engine
   "Run validations specific to CSV"
   [file]
@@ -172,13 +170,19 @@
       (recur (update-in m [(ffirst updates)] (sfirst updates))
              (rest updates)))))
 
+(defn trim-file-script
+  [s]
+  (second (re-seq #"[^;]+" s)))
+
 (defn process-validations
   "Post process validations, clean them and shit"
   [m]
   (update-all-in m {"head -n 1" trimming
                     "wc -l" first-numbers
                     "du -h" first-numbers
-                    "validaciones/repetidos" first-numbers}))
+                    "validaciones/repetidos" first-numbers
+                    "file" trim-file-script
+                    }))
 
 (defn to-validate []
   (difference (file-names) (set (map :id (db :resource-metadata)))))
