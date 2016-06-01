@@ -91,9 +91,9 @@
 
 (def csv-validations
   "Vector of validations aplicable only to rels generated from CSV"
-  [nils-csv-validation
-   has-weird-format-numbers?
-   has-mixed-formats])
+  [{:name "nils-csv-validation" :fn nils-csv-validation}
+   {:name "has-weird-format-numbers" :fn has-weird-format-numbers?}
+   {:name "has-mixed-formats" :fn has-mixed-formats}])
 
 (defn eval-csv-validation
   "Instead of just running the function, handle its exceptions"
@@ -101,19 +101,16 @@
   (try (f rel)
        (catch Exception e "error")))
 
-(defn pprintfn
-  "Pretty print a function"
-  [fn-object]
-  (second (re-seq #"[^//]+" (str fn-object))))
+
 
 (defn csv-engine
   "Run validations specific to CSV"
   [file]
   (try
     (let [rel (take 1000 (csv file))]          ;just a 1000 rows sample for performance
-      (zipmap (map pprintfn csv-validations)
+      (zipmap (map :name csv-validations)
               (map #(eval-csv-validation % rel)
-                   csv-validations)))
+                   (map :fn csv-validations))))
     (catch Exception e {:csv-engine-error (str e)})))
 
 (comment(defn dora-insert
