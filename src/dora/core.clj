@@ -34,11 +34,6 @@
   []
   (:identity (friend/current-authentication)))
 
-(defn my-fns
-  "Get the list of custom functions for current user"
-  []
-  (:fns (db-findf :users {:username (:identity (friend/current-authentication))})))
-
 (def ^{:doc "A tester that attempts to be secure, and allows def and threads."}
   default-tester
   [(blacklist-objects [clojure.lang.Compiler clojure.lang.Ref clojure.lang.Reflector
