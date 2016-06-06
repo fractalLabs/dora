@@ -50,17 +50,19 @@
 
 (defn data-core []
   (doall [(update-db :instituciones instituciones)
-                   (update-db :zendesk-tickets all-tickets)
-                   (update-db :zendesk-organizations all-organizations)
-                   (update-db :zendesk-satisfaction all-satisfaction)
-                   (update-db :zendesk-users all-users)
-                   (update-db :adela-catalogs adela-catalogs)
-                   (update-db :adela-plans adela-plans)
-                   (update-db :adela-organizations adela-organizations)
-                   (update-db :adela-inventories adela-inventory)
-                   ;(update-db :google_analytics download-data)
-                   (update-db :fusion_inventory dora-view-inventory)
-                   (dc-update)]))
+          (update-db :zendesk-tickets all-tickets)
+          (update-db :zendesk-organizations all-organizations)
+          (update-db :zendesk-satisfaction all-satisfaction)
+          (update-db :zendesk-users all-users)
+          (update-db :adela-catalogs adela-catalogs)
+          (update-db :adela-plans adela-plans)
+          (update-db :adela-organizations adela-organizations)
+          (update-db :adela-inventories adela-inventory)
+                                        ;(update-db :google_analytics download-data)
+          (mv-old-file)
+          (validate-dgm)
+          (update-db :fusion_inventory dora-view-inventory)
+          (dc-update)]))
 
 (defn metricas
   "Despliega las Métricas de Data Core"
