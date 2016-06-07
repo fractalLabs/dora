@@ -180,7 +180,6 @@
    :up (count (filter #(= "true" (:status %)) rel))
    :down (map :url (remove #(= "true" (:status %)) rel))})
 
-(defn -main [] (check-resources))
 ;(def urls-checadas (check-urls (db-find "resources")))
 
 (defn update-status [resource]
