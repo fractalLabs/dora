@@ -28,7 +28,7 @@
                  [ring-cors "0.1.7"];"0.1.7"
                  [ring-server "0.4.0"]
                  [com.rpl/specter "0.9.3"]
-                ]
+                 [jarohen/chime "0.1.9"]]
   :jvm-opts ["-Djava.security.policy=.java.policy" "-Xmx16g"]
   :main dora.server
   :plugins [[lein-ring "0.9.7"]]

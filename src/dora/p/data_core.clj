@@ -1,17 +1,22 @@
 (ns dora.p.data-core
   "Copy and update the collections that are used in data fusion"
-  (:require [clojure.set :refer :all]
+  (:require [chime :refer [chime-ch]]
+            [clj-time.core :as t]
+            [clj-time.periodic :refer [periodic-seq]]
+            [clojure.core.async :as a :refer [<! go-loop]]
+            [clojure.set :refer :all]
             [clojure.string :as s]
             ;[dgm-analytics.core :refer :all]
-            [mongerr.core :refer :all]
             [dora.data :refer :all]
             [dora.p.adela :refer :all]
             [dora.p.ckan :refer :all]
             [dora.p.zendesk :refer :all]
             [dora.pro-file :refer :all]
             [monger.operators :refer :all]
+            [mongerr.core :refer :all]
             [nillib.formats :refer :all]
-            [nillib.worm :refer :all]))
+            [nillib.worm :refer :all])
+  (:import [org.joda.time DateTimeConstants DateTimeZone]))
 
 (defn dc-add-query
   [campo value-fn]
@@ -64,6 +69,42 @@
           (validate-dgm)
           (update-db :fusion_inventory dora-view-inventory)
           (dc-update)]))
+
+(defn today-at
+  ([] (today-at 0 0 0 0))
+  ([h] (today-at h 0 0 0))
+  ([h m] (today-at h m 0 0))
+  ([h m s] (today-at h m s 0))
+  ([h m s mil]
+   (.. (t/now)
+       (withZone (DateTimeZone/forID "America/New_York"))
+       (withTime h m s mil))))
+(chime-at [(-> 2 t/secs t/from-now) (-> 4 t/secs t/from-now)]
+
+          (fn [time]
+            (println "Chiming at" time))
+
+          {:on-finished (fn []
+                          (println "Schedule finished."))})
+(defn schedule
+  [time lapse f]
+  (chime-at (periodic-seq (apply today-at time)
+                          lapse)
+            (fn [time]
+              (f)
+              (println "At: " time))
+            {:error-handler (fn [e] (println "at: " (t/now) ", Error: " e))}))
+
+(defn daily-schedule
+  ([f]
+   (daily-schedule [] f))
+  ([time f]
+   (schedule time (t/days 1) f)))
+
+(defn schedule-data-core
+  "Run data core everyday at 12am"
+  []
+  (daily-schedule data-core))
 
 (defn metricas
   "Despliega las Métricas de Data Core"
