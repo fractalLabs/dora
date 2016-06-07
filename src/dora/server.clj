@@ -18,7 +18,8 @@
             [dora.pro-file :refer :all]
             [dora.util :refer :all]
             [mongerr.core :refer :all]
-            [nillib.formats :refer :all]))
+            [nillib.formats :refer :all])
+  (:gen-class))
 
 (defn generate-csv-response
   [data & [status]]
@@ -133,3 +134,5 @@
 (defn run
   ([] (run 5555))
   ([port] (jetty/run-jetty app {:port port})))
+
+(defn -main [] (run))

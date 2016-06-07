@@ -30,6 +30,7 @@
                  [com.rpl/specter "0.9.3"]
                 ]
   :jvm-opts ["-Djava.security.policy=.java.policy" "-Xmx16g"]
+  :main dora.server
   :plugins [[lein-ring "0.9.7"]]
   :repl-options {:init-ns dora.repl
                  :timeout 180000}
