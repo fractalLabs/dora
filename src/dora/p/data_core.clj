@@ -77,7 +77,7 @@
   ([h m s] (today-at h m s 0))
   ([h m s mil]
    (.. (t/now)
-       (withZone (DateTimeZone/forID "America/New_York"))
+       (withZone (DateTimeZone/forID "America/Mexico_City"))
        (withTime h m s mil))))
 (chime-at [(-> 2 t/secs t/from-now) (-> 4 t/secs t/from-now)]
 
