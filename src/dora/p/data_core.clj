@@ -79,13 +79,7 @@
    (.. (t/now)
        (withZone (DateTimeZone/forID "America/Mexico_City"))
        (withTime h m s mil))))
-(chime-at [(-> 2 t/secs t/from-now) (-> 4 t/secs t/from-now)]
 
-          (fn [time]
-            (println "Chiming at" time))
-
-          {:on-finished (fn []
-                          (println "Schedule finished."))})
 (defn schedule
   [time lapse f]
   (chime-at (periodic-seq (apply today-at time)
