@@ -15,6 +15,7 @@
             [ring.middleware.params :refer [wrap-params]]
             [dora.core :refer :all]
             [dora.data :refer :all]
+            [dora.p.data-core :refer :all]
             [dora.pro-file :refer :all]
             [dora.util :refer :all]
             [mongerr.core :refer :all]
