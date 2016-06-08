@@ -1,6 +1,6 @@
 (ns dora.p.data-core
   "Copy and update the collections that are used in data fusion"
-  (:require [chime :refer [chime-ch]]
+  (:require [chime :refer [chime-at chime-ch]]
             [clj-time.core :as t]
             [clj-time.periodic :refer [periodic-seq]]
             [clojure.core.async :as a :refer [<! go-loop]]

@@ -135,4 +135,6 @@
   ([] (run 5555))
   ([port] (jetty/run-jetty app {:port port})))
 
-(defn -main [] (run))
+(defn -main []
+  (schedule-data-core)
+  (run))
