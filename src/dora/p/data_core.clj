@@ -55,7 +55,8 @@
       (db-insert coll (remove-nils (f)))))
 
 (defn data-core []
-  (doall [(update-db :instituciones instituciones)
+  (doall [(update-all-ckan)
+          (update-db :instituciones instituciones)
           (update-db :zendesk-tickets all-tickets)
           (update-db :zendesk-organizations all-organizations)
           (update-db :zendesk-satisfaction all-satisfaction)
