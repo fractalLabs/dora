@@ -148,11 +148,11 @@
              (catch Exception e (error "Error 90" e)))
         (try (save-failures (sort-by :organization failures))
              (catch Exception e (error "Error 91" e)))
-        (try (ticket-downtime
-               (str-reporte-downtime
-                 (count failures)
-                 (count (distinct (map :organization failures)))))
-             (catch Exception e (error "Error 92" e)))
+        (comment (try (ticket-downtime
+                       (str-reporte-downtime
+                        (count failures)
+                        (count (distinct (map :organization failures)))))
+                      (catch Exception e (error "Error 92" e))))
         ;(try (link-uptime-report) (catch Exception e (error "Error 96" e)))
         ))))
 
@@ -219,15 +219,6 @@
          "Reporte de urls rotas"
          (str "Las siguientes ligas estan rotas:\n" (s/join "\n" url-list))))
 
-(defn notificacion-ligas-rotas
-  ([to url-list] (notificacion-ligas-rotas ticket to url-list))
-  ([f to url-list]
-    (f to
-       "Reporte de urls rotas"
-       (str "Las siguientes ligas estan rotas:\n" (s/join "\n" url-list)))))
-
-(defn send-emails [data]
-  (map #(notificacion-ligas-rotas (:email %) (:urls %)) data))
 
 (defn errors-today []
   (distinct (map #(select-keys % [:url :status])

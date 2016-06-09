@@ -1,9 +1,9 @@
 (defproject dora "1.0.0-SNAPSHOT"
   :description "Dora la exploradora de datos"
-  :dependencies [[clj-http "2.0.0"]
+  :dependencies [[clj-http "2.2.0"]
                  [clj-pdf "2.2.0"]
                  [clj-time "0.11.0"]
-                 [clj-zendesk "0.1.0"]
+                 ;[clj-zendesk "0.1.0"]
                  [clojail "1.0.6"]
                  [cloogle "0.1.0-SNAPSHOT"]
                  [com.cemerick/friend "0.2.1"]

@@ -6,13 +6,10 @@
             [clj-pdf.core :refer :all]
             [clj-time.format :as f]
             [clj-time.core :as t]
-            [clj-zendesk.core :refer :all]
             [environ.core :refer [env]]
             [mongerr.core :refer :all]
             [nillib.formats :refer :all]
             [nillib.text :refer :all]))
-
-(setup "mxabierto" (env :zendesk-email) (env :zendesk-password))
 
 (def zen-auth {:basic-auth [(env :zendesk-email) (env :zendesk-password)]})
 
@@ -67,18 +64,6 @@
                            (json-body {:user new-data}))
       handle-response))
 
-(defn ticket
-  ([conf]
-   (create Ticket conf))
-  ([email subject body]
-   (ticket {:requester {:email email}
-            :subject subject
-            :comment {:body body}})))
-
-(defn ticket-downtime [body]
-  (ticket {:subject "Sitios caidos"
-           :tags ["alerta-automatica downtime"]
-           :comment {:body body}}))
 
 (defn read-tickets [data]
   (json/read-str (:body data) :key-fn keyword))
