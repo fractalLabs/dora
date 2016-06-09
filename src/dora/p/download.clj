@@ -41,13 +41,6 @@
                    problemic)
             recursos)))
 
-(defn list-recursos-faltantes-pemex []
-  (csv "/tmp/pemex.csv"
-       (recursos-faltantes
-        (mapcat :resources
-                (filter #(= "pemex" (:name (:organization %)))
-                        (db-find :datasets_bak))))))
-
 (defn fix-google-url
   [url]
   (if (re-find #"https://drive.google.com/file/d" url)
