@@ -13,35 +13,59 @@
             [nillib.worm :refer :all])
   (:import [com.mongodb MongoOptions ServerAddress]))
 
-(defn get-json [url]
+(defn get-json
+  "GET a JSON endpoint"
+  [url]
   (-> url
       http/get
       :body
-      (json/read-str :key-fn (comp keyword #(clojure.string/replace % " " "_")))))
+      (json/read-str :key-fn
+                     (comp keyword #(clojure.string/replace % " " "_")))))
 
-(defn api [& endpoint]
-  (:result (get-json (str "http://catalogo.datos.gob.mx/api/3/"
-                          (s/join endpoint)))))
+(def ^:dynamic *ckan-url* "http://catalogo.datos.gob.mx/api/3/")
 
-(defn package-list []
+(defn api
+  "make a call on CKAN endpoint"
+  [& endpoint]
+  (try (:result (get-json (str *ckan-url*
+                               (s/join endpoint))))
+       (catch Exception e (println "exception e, ocurred in endpoint: " (s/join endpoint)))))
+
+(defn package-list
+  "get list of packages"
+  []
   (api "action/package_list"))
 
 (defn package-show
+  "full representation of a package
+  or all packages if called without args"
   ([] (pmap package-show (package-list)))
   ([package]
     (api "action/package_show?id=" package)))
 
-(defn group-list []
+(defn group-list
+  "get list of groups"
+  []
   (api "action/group_list"))
 
-(defn group-show [id]
-  (api "action/group_show?id=" id))
+(defn group-show
+  "full representation of group
+  all groups if called without args"
+  ([] (pmap group-show (group-list)))
+  ([id]
+   (api "action/group_show?id=" id)))
 
-(defn tag-list []
+(defn tag-list
+  "list of different tags"
+  []
   (api "action/tag_list"))
 
-(defn tag-show [id]
-  (api "action/tag_show?id=" id))
+(defn tag-show
+  "get data on certain tag
+  or on all tags with no args"
+  ([] (map tag-show (tag-list)))
+  ([id]
+   (api "action/tag_show?id=" id)))
 
 (defn package-search [q]
   (api "action/package_search?q=" q))
@@ -52,31 +76,44 @@
 (defn recently-changed []
   (api "action/recently_changed_packages_activity_list"))
 
-(defn all-ckan []
+(defn all-ckan
+  "all data on all packages"
+  []
   (digitalize (map package-show (package-list))))
 
-(defn email [dataset]
+(defn email
+  "Exctract email from a dataset"
+  [dataset]
   (let [extras (:extras dataset)
         email (filter #(= "dcat_publisher_email" (:key %)) extras)]
     (if-not (empty? email)
       (re-seq #"[^,; \n]+"
               (:value (first email))))))
 
-(defn emails [datasets]
+(defn emails
+  "emails from a list of datasets"
+  [datasets]
   (remove nil? (distinct (flatten (map email datasets)))))
 
-(defn urls [datasets]
-  (map #(map :url (:resources %)) datasets))
+(defn urls
+  "list of urls from the list of datasets"
+  [datasets]
+  (flatten (map #(map :url (:resources %)) datasets)))
 
-(defn ckan-organizations [datasets]
+(defn ckan-organizations
+  "list of organizations from a list of datasets"
+  [datasets]
   (distinct (map :organization datasets)))
 
-(defn recursos-from-datasets [dataset]
+(defn resources-from-dataset
+  "list of resources, with organization name and dataset id"
+  [dataset]
   (map #(assoc % :dataset_id (:id dataset)
                  :organization (:name (:organization dataset)))
       (:resources dataset)))
 
-(defn update-all-ckan [];;;p2:consistencia, bench:6.2m
+(defn update-all-ckan
+  [];;;p2:consistencia, bench:6.2m
   (let [data (all-ckan)
         ndata (count data)]
     (db-delete :datasets)
@@ -84,5 +121,5 @@
     (println "updated " (count (map #(db-insert :datasets %) data)) "datasets")
     (println "updated "
          (count (map #(db-insert :resources %)
-                     (mapcat recursos-from-datasets data)))
+                     (mapcat resources-from-dataset data)))
          " resources")))
