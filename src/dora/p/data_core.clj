@@ -9,6 +9,7 @@
             ;[dgm-analytics.core :refer :all]
             [dora.data :refer :all]
             [dora.p.adela :refer :all]
+            [dora.p.agente-web :refer :all]
             [dora.p.ckan :refer :all]
             [dora.p.zendesk :refer :all]
             [dora.pro-file :refer :all]
@@ -67,6 +68,8 @@
           (update-db :adela-inventories adela-inventory)
                                         ;(update-db :google_analytics download-data)
           (mv-old-file)
+          (get-status-1)
+          (save-broken-links)
           (validate-dgm)
           (update-db :fusion_inventory dora-view-inventory)
           (dc-update)]))
