@@ -293,7 +293,7 @@
                          (try-catch (encoding-recommendation metadata))
                          (try-catch (duplicated-url-recommendation url))
                          (try-catch (resource-description-recommendation resource))
-                         (if (re-find #"csv|CSV" url)
+                         (if (and (not (nil? url)) (re-find #"csv|CSV" url))
                            [(try-catch (has-mixed-formats-recommendation metadata))
                             (try-catch (nils-csv-validation-recommendation metadata))
                             (try-catch (has-weird-format-numbers?-recommendation metadata))])])))
