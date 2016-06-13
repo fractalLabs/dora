@@ -251,8 +251,9 @@
   ([] (filter #(last-day? (:now %))
               (broken)))
   ([url]
-   (first (filter #(last-day? (:now %))
-                  (broken {:url url})))))
+   (if-not (nil? url)
+     (first (filter #(last-day? (:now %))
+                    (broken {:url url}))))))
 
 (defn sure-errors []
  (map :url (broken-today)))
