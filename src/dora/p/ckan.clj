@@ -67,13 +67,16 @@
   ([id]
    (api "action/tag_show?id=" id)))
 
-(defn package-search [q]
+(defn package-search
+  [q]
   (api "action/package_search?q=" q))
 
-(defn resource-search [q]
+(defn resource-search
+  [q]
   (api "action/resource_search?query=" q))
 
-(defn recently-changed []
+(defn recently-changed
+  []
   (api "action/recently_changed_packages_activity_list"))
 
 (defn all-ckan
@@ -113,13 +116,10 @@
       (:resources dataset)))
 
 (defn update-all-ckan
-  [];;;p2:consistencia, bench:6.2m
-  (let [data (all-ckan)
-        ndata (count data)]
+  []
+  (let [data (doall (all-ckan))]
     (db-delete :datasets)
     (db-delete :resources)
-    (println "updated " (count (map #(db-insert :datasets %) data)) "datasets")
-    (println "updated "
-         (count (map #(db-insert :resources %)
-                     (mapcat resources-from-dataset data)))
-         " resources")))
+    (doall (map #(db-insert :datasets %) data))
+    (doall (map #(db-insert :resources %)
+                (mapcat resources-from-dataset data)))))
