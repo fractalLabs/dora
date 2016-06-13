@@ -288,15 +288,15 @@
 (defn recommendations
   "Generate recommendations from a file url and its metadata"
   [url metadata resource]
-  (remove-nils [(try-catch (broken-link-recommendation url))
-                (try-catch (acento-recommendation url))
-                (try-catch (encoding-recommendation metadata))
-                (try-catch (duplicated-url-recommendation url))
-                (try-catch (resource-description-recommendation resource))
-                (try-catch (has-mixed-formats-recommendation metadata))
-                (try-catch (nils-csv-validation-recommendation metadata))
-                (try-catch (has-weird-format-numbers?-recommendation metadata))
-                ]))
+  (remove-nils (flatten [(try-catch (broken-link-recommendation url))
+                         (try-catch (acento-recommendation url))
+                         (try-catch (encoding-recommendation metadata))
+                         (try-catch (duplicated-url-recommendation url))
+                         (try-catch (resource-description-recommendation resource))
+                         (if (re-find #"csv|CSV" url)
+                           (try-catch (has-mixed-formats-recommendation metadata))
+                           (try-catch (nils-csv-validation-recommendation metadata))
+                           (try-catch (has-weird-format-numbers?-recommendation metadata)))])))
 
 (defn resource
   "Find a resource with a URL"
