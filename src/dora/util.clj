@@ -137,3 +137,8 @@
   "Apply f to the values of m"
   [f m]
   (zipmap (keys m) (map f (vals m))))
+
+(defn insert-csv
+  "insert NAME.csv into collection NAME"
+  [name]
+  (db-insert name (csv (str name ".csv"))))
