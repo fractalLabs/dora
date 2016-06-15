@@ -3,7 +3,9 @@
   (:require [clojure.java.io :as io]
             [clojure.java.shell :refer :all]
             [clojure.string :as s]
-            [clj-http.client :as http]))
+            [clj-http.client :as http]
+            [mongerr.core :refer :all]
+            [nillib.formats :refer :all]))
 
 (defn distinct-by
   "Returns a lazy sequence of the elements of coll, removing any elements that
