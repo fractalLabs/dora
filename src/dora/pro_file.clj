@@ -357,10 +357,17 @@
                   :resource %)
        (:distribution (:dataset d))))
 
-(defn inventory-resources-denormalized []
+(defn inventory-resources-denormalized
+  []
   (let [inventories (db :adela-inventories)
         datasets (mapcat flatten-inventory inventories)]
     (mapcat flatten-inventory-dataset datasets)))
+
+(defn ieda?
+  [url]
+  (if (and (not (nil? url)) (db-findf :ieda {:url url}))
+    true
+    false))
 
 (defn dora-view-inventory    ;will expect entries from inventory-resources-denormalized
   ([] (map dora-view-inventory (inventory-resources-denormalized)))
@@ -376,7 +383,8 @@
                  :file-metadata metadata
                  :recommendations (remove string?
                                           (recommendations url metadata (:resource result)))
-                 :id (str (:id (:dataset result)))))
+                 :id (str (:id (:dataset result)))
+                 :ieda (ieda? url)))
         (catch Exception e (println "Exception: " e)))))
 
 (defn save-fusion
