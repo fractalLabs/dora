@@ -54,10 +54,6 @@
             (repl-route params)))
    ;(ANY "/validate" [& params]
    ;     (json (validate (:url params))))
-   (ANY "/fusion" [& params]
-        (println "Params: " params)
-        (println "Dora-view: " (dora-view params))
-        (json (dora-view params)))
    (ANY "/resource" [& params]
         (slurp (data-directory (:id (db-findf :resources params)))))
    (GET "/db" [& params]
