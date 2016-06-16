@@ -321,8 +321,6 @@
   ([url analytics-data]
    (first (filter #(= url (:url %)) analytics-data))))
 
-(def fusion dora-view)
-
 (defn inventory-resources
   []
   (mapcat :distribution (mapcat :dataset (db-find :adela-inventories))))
