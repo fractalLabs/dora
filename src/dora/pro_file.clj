@@ -315,29 +315,11 @@
 
 (defn analytics
   "get the stored google analytics history"
-  [url]
-  (try (:value (db-findf :google_analytics {:url url}))
-       (catch java.lang.NullPointerException e)))
-
-(defn dora-view [result]
-  (let [url (:url result)
-        resource (resource url)
-        dataset (dataset resource)
-        catalog (find-catalog-by-dataset-name (:title dataset))
-        catalog-dataset (first (find-rel :title
-                                         (:title dataset)
-                                         (:dataset catalog)))
-        metadata (resource-metadata (:id resource))]
-    {:resource resource
-     :dataset (dissoc dataset :resources)
-     :catalog (dissoc catalog :dataset)
-     :catalog-dataset (dissoc catalog-dataset :distribution)
-     :catalog-dataset-resource (first (find-rel :title
-                                                (:name resource)
-                                                (:distribution catalog-dataset)))
-     :file-metadata metadata
-     :recommendations (remove string?
-                              (recommendations url metadata resource))}))
+  ([url]
+   (try (:value (db-findf :google_analytics {:url url}))
+        (catch java.lang.NullPointerException e)))
+  ([url analytics-data]
+   (first (filter #(= url (:url %)) analytics-data))))
 
 (def fusion dora-view)
 
@@ -370,8 +352,8 @@
     false))
 
 (defn dora-view-inventory    ;will expect entries from inventory-resources-denormalized
-  ([] (map dora-view-inventory (inventory-resources-denormalized)))
-  ([result]
+  ([] (map dora-view-inventory (inventory-resources-denormalized) (db :google_analytics)))
+  ([result analytics-data]
    (try (let [url (:downloadURL (:resource result))
               resource (resource url)
               dataset (dataset resource)
@@ -379,7 +361,7 @@
           (assoc {:adela result}
                  :ckan {:resource resource
                         :dataset (dissoc dataset :resources)}
-                 :analytics {:downloads {:total (analytics url)}}
+                 :analytics {:downloads {:total (analytics url analytics-data)}}
                  :file-metadata metadata
                  :recommendations (remove string?
                                           (recommendations url metadata (:resource result)))
@@ -387,13 +369,6 @@
                  :ieda (ieda? url)))
         (catch Exception e (println "Exception: " e)))))
 
-(defn save-fusion
-  ([] (save-fusion (db :resources)))
-  ([resources]
-   (map #(try (db-insert :fusion (dora-view %))
-              (catch Exception e (db-insert :fusion_errors
-                                            (assoc % :exception (str e)))))
-        resources)))
 
 (defn save-fusion-inventory
   ([] (save-fusion-inventory (inventory-resources-denormalized)))
@@ -410,47 +385,3 @@
           (json (remove-nils (map #(try (dora-view-inventory %)
                                         (catch Exception e))
                                   rsrcs))))))
-
-(comment
-;;original validation engine
-(defn profile
-  "if first time, run validations and store.
-  For returning costumers return previous results"
-  ([url] (profile url metas))
-  ([url metas]
-   (if-let [result (resource-metadata url)]
-     (dora-view result)
-     (let [tmp (dora-insert url)
-           file-name (download-if-url url)
-           results (execute-validations file-name url)]
-         (dora-update url results)
-         (dora-view (dora-find url))))))
-
-(defn folder-file
-  "Concat the file name to the folder"
-  [folder file]
-  (if-not (= (last folder) \/)
-          (str folder "/" file)
-          (str folder file)))
-
-(defn profile-folder
-  "Run validations on all files from folder"
-  [folder]
-  (doall (pmap #(try (db-upsert :file-profiles
-                                {:file %}
-                                {:profile (profile %) :file %})
-                     (catch Exception e (db-insert :error
-                                                   {:error (str e)})))
-               (map (partial folder-file folder)
-                    (remove is-directory? (ls folder))))))
-
-(defn validate
-  "Validate a file.
-  Main entry point."
-  [file-name]
-  (if (map? file-name)
-    (validate (:url file-name))
-    (if (is-directory? file-name)
-      (profile-folder file-name)
-      (profile file-name))))
-)
