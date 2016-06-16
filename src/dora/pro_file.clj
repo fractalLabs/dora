@@ -206,7 +206,7 @@
 
 (defn broken-link-recommendation
   "If the URL was reported as broken today, raise this alert"
-  [url]
+  [url todays-broken]
   (if-let [rec (broken-today url)]
     (assoc rec :name "La URL no pudo ser leída por el robot"
            :description "Esto puede significar que la URL está caída, o no sea accesible para robots."
@@ -287,7 +287,7 @@
 
 (defn recommendations
   "Generate recommendations from a file url and its metadata"
-  [url metadata resource]
+  [url metadata resource todays-broken]
   (remove-nils (flatten [(try-catch (broken-link-recommendation url))
                          (try-catch (acento-recommendation url))
                          (try-catch (encoding-recommendation metadata))
@@ -350,8 +350,8 @@
     false))
 
 (defn dora-view-inventory    ;will expect entries from inventory-resources-denormalized
-  ([] (map dora-view-inventory (inventory-resources-denormalized) (db :google_analytics)))
-  ([result analytics-data]
+  ([] (map dora-view-inventory (inventory-resources-denormalized) (db :google_analytics) (broken-today)))
+  ([result analytics-data todays-broken]
    (try (let [url (:downloadURL (:resource result))
               resource (resource url)
               dataset (dataset resource)
@@ -362,7 +362,7 @@
                  :analytics {:downloads {:total (analytics url analytics-data)}}
                  :file-metadata metadata
                  :recommendations (remove string?
-                                          (recommendations url metadata (:resource result)))
+                                          (recommendations url metadata (:resource result) todays-broken))
                  :id (str (:id (:dataset result)))
                  :ieda (ieda? url)))
         (catch Exception e (println "Exception: " e)))))
