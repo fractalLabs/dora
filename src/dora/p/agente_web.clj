@@ -57,6 +57,10 @@
        (println "validated " (count statuses) " statuses")
     ))
 
+(defn profeco-status []
+  (let [url "http://internet.contenidos.inegi.org.mx/contenidos/Productos/prod_serv/contenidos/espanol/bvinegi/productos/geografia/imagen_cartografica/1_50_000/702825269258_s.zip"]
+    (db-insert :profeco-status {:url url :status (status url)})))
+
 (defn trim-or-empty
   "Trim string but if it is not a string, then return empty string"
   [s]
