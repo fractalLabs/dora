@@ -11,7 +11,7 @@
                  (s/join endpoint))))
 
 (defn adela-staging-api [& endpoint]
-  (get-json (str "http://adela-staging.herokuapp.com/"
+  (get-json (str "http://13.84.158.149/"
                  (s/join endpoint))))
 
 (defn adela-catalog [slug]
