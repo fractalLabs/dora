@@ -350,7 +350,11 @@
     false))
 
 (defn dora-view-inventory    ;will expect entries from inventory-resources-denormalized
-  ([] (map #(dora-view-inventory % (db :google_analytics) (broken-today)) (inventory-resources-denormalized)))
+  ([]
+   (let [analytics  (db :google_analytics)
+         broken (broken-today)]
+     (map #(dora-view-inventory % analytics broken)
+          (inventory-resources-denormalized))))
   ([result analytics-data todays-broken]
    (try (let [url (:downloadURL (:resource result))
               resource (resource url)
