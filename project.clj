@@ -1,8 +1,8 @@
 (defproject dora "1.0.0-SNAPSHOT"
   :description "Dora la exploradora de datos"
-  :dependencies [[clj-http "2.2.0"]
-                 [clj-pdf "2.2.0"]
-                 [clj-time "0.11.0"]
+  :dependencies [[clj-http "3.1.0"]
+                 [clj-pdf "2.2.1"]
+                 [clj-time "0.12.0"]
                  ;[clj-zendesk "0.1.0"]
                  [clojail "1.0.6"]
                  [cloogle "0.1.0-SNAPSHOT"]
@@ -21,7 +21,7 @@
                  [mongerr "1.0.0-SNAPSHOT"]
                  [nillib "0.1.0-SNAPSHOT"]
                  [nlp "0.1.0-SNAPSHOT"]
-                 [org.clojure/clojure "1.7.0"]
+                 [org.clojure/clojure "1.8.0"]
                  [org.clojure/core.cache "0.6.4"]
                  [org.clojure/data.json "0.2.6"]
                  [org.clojure/tools.logging "0.3.1"]
