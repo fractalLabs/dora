@@ -27,6 +27,7 @@
                  [org.clojure/tools.logging "0.3.1"]
                  [ring/ring-json "0.4.0"]
                  [ring-cors "0.1.8"];"0.1.7"
+                 [ring-middleware-format "0.7.0"]
                  [ring-server "0.4.0"]
                  ;[com.rpl/specter "0.9.3"]
                  [jarohen/chime "0.1.9"]]
