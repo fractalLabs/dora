@@ -4,14 +4,10 @@
             [monger.operators :refer :all]
             [mongerr.core :refer :all]))
 
-(def adela-url "http://adela.datos.gob.mx/")
+(def adela-url "http://13.84.158.149/") ;"http://adela.datos.gob.mx/"
 
 (defn adela-api [& endpoint]
   (get-json (str adela-url
-                 (s/join endpoint))))
-
-(defn adela-staging-api [& endpoint]
-  (get-json (str "http://13.84.158.149/"
                  (s/join endpoint))))
 
 (defn adela-catalog [slug]
@@ -33,7 +29,7 @@
                          (catch Exception e (println "error with: " (:slug %))))
                    (db :adela-organizations))))
   ([slug]
-   (assoc (adela-staging-api "api/v1/organizations/" slug "/inventory.json")
+   (assoc (adela-api "api/v1/organizations/" slug "/inventory.json")
           :slug slug)))
 
 (defn organizations-req
