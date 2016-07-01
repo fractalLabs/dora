@@ -22,7 +22,7 @@
       (json/read-str :key-fn
                      (comp keyword #(clojure.string/replace % " " "_")))))
 
-(def ^:dynamic *ckan-url* "http://catalogo.datos.gob.mx/api/3/")
+(def ^:dynamic *ckan-url* "http://datos.gob.mx/busca/api/3/")
 
 (defn api
   "make a call on CKAN endpoint"
@@ -68,8 +68,10 @@
    (api "action/tag_show?id=" id)))
 
 (defn package-search
-  [q]
-  (api "action/package_search?q=" q))
+  ([]
+   (api "action/package_search?rows=300000"))
+  ([q]
+   (api "action/package_search?q=" q)))
 
 (defn resource-search
   [q]
