@@ -68,10 +68,10 @@
           (update-db :adela-inventories adela-inventory)
                                         ;(update-db :google_analytics download-data)
           (mv-old-file)
-          (get-status-1)
+          ;(get-status-1)
           (save-broken-links)
           (validate-dgm)
-          (update-db :fusion_inventory dora-view-inventory)
+          (update-db :data-fusion dora-view-inventory)
           (dc-update)]))
 
 (defn today-at
