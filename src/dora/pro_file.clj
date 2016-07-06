@@ -241,7 +241,7 @@
     {:name "Hay mas de un recurso de datos con esta URL"
      :description "No es necesario que los mismos datos estén dados de alta mas de una vez. Revisar otras áreas, o dependencias que tengan estos datos publicados."
      :clave "c42"
-     :categoria "consistencia"}))
+     :categoria "calidad"}))
 
 (defn resource-description-recommendation
   "Checks if the resource has no description"
@@ -250,7 +250,7 @@
     {:name "El recurso no tiene descripción"
      :description "Es necesario agregar una descripción al recurso, para que sea fácil entender la finalidad del recurso"
      :clave "u22"
-     :categoria "interoperabilidad"}))
+     :categoria "documentacion"}))
 
 (defn has-mixed-formats-recommendation
   [m]
