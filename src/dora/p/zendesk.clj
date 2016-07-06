@@ -68,13 +68,23 @@
 (defn read-tickets [data]
   (json/read-str (:body data) :key-fn keyword))
 
-(defn get-all-pages [endpoint]
-  (loop [curr (zendesk-request (name endpoint))
-         all []]
-    (if (:next_page @curr)
-      (recur (request (:next_page @curr))
-             (concat all (endpoint @curr)))
-      (concat all (endpoint @curr)))))
+(defn articles
+  []
+  (:articles @(request "https://mxabierto.zendesk.com/api/v2/help_center/articles.json?page=1&per_page=100")))
+
+(defn report-articles []
+  (csv "articulos.csv" (map #(select-keys % [:html_url :name]) (articles))))
+
+(defn get-all-pages
+  ([endpoint]
+   (get-all-pages endpoint endpoint))
+  ([endpoint keyname]
+   (loop [curr (zendesk-request endpoint)
+          all []]
+     (if (:next_page @curr)
+       (recur (request (:next_page @curr))
+              (concat all (keyname @curr)))
+       (concat all (endpoint @curr))))))
 
 (defn all-tickets []
   (get-all-pages :tickets))
@@ -87,6 +97,9 @@
 
 (defn all-users []
   (get-all-pages :users))
+
+(comment (defn all-articles []
+           (get-all-pages "help_center/articles" :articles)))
 
 (defn due-tickets [ticks]
   (filter #(or (= "open" (:status %))
