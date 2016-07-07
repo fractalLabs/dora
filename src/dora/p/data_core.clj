@@ -63,7 +63,7 @@
           (update-db :zendesk-satisfaction all-satisfaction)
           (update-db :zendesk-users all-users)
           (update-db :adela-catalogs adela-catalogs)
-          (update-db :adela-plans adela-plans)
+          ;(update-db :adela-plans adela-plans)
           (update-db :adela-organizations adela-organizations)
           (update-db :adela-inventories adela-inventory)
                                         ;(update-db :google_analytics download-data)

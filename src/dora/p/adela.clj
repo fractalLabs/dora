@@ -14,14 +14,14 @@
   (assoc (adela-api slug "/catalogo.json")
          :slug slug))
 
-(defn adela-plan [slug]
-  (adela-api slug "/plan.json"))
+;(defn adela-plan [slug]
+;  (adela-api slug "/plan.json"))
 
 (defn adela-catalogs []
   (map (comp adela-catalog :slug) (adela-api "api/v1/catalogs")))
 
-(defn adela-plans []
-  (remove nil? (map (comp adela-plan :slug) (adela-api "api/v1/catalogs"))))
+;(defn adela-plans []
+;  (remove nil? (map (comp adela-plan :slug) (adela-api "api/v1/catalogs"))))
 
 (defn adela-inventory
   ([] (remove #(nil? (:title %))
