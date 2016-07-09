@@ -61,7 +61,7 @@
            :jvm? true
            :timeout 180000
            :init '(do (require '[monger.operators :refer :all]
-                               '[mongerr.core :refer [db db-find db-geo db-text-search]]
+                               '[mongerr.core :refer [db db-find db-findf db-geo db-text-search]]
                                '[clojure.set :refer :all]
                                '[clojure.string :as s]
                                '[clojure.repl :refer [doc find-doc]])
