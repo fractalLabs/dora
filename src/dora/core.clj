@@ -65,9 +65,8 @@
                                '[clojure.set :refer :all]
                                '[clojure.string :as s]
                                '[clojure.repl :refer [doc find-doc]])
-                      (require '[dora.p.agente-web :refer [errors-today link-uptime-report sure-errors prepare-errors]]
-                               '[dora.p.data-core :refer :all]
-                               '[dora.pro-file :refer [validate]]);;PRESIDENCIA
+                      (require '[dora.p.agente-web :refer [errors-today sure-errors]]
+                               '[dora.p.data-core :refer :all])
                       (future (Thread/sleep 9000000)
                               (-> *ns* .getName remove-ns)))))
 
@@ -185,9 +184,10 @@
                (replace-nil (args :expr) " "))
         return (eval-wrapper expr)
         jsonp (args :jsonp)]
-    (spit "/var/log/repl-route.log"
-          (str args "\n")
-          :append true)
+    (try (spit "repl-route.log"           ;"/var/log/repl-route.log"
+               (str args "\n")
+               :append true)
+         (catch Exception e))
     (try
       (if (empty? (return :error))
         (info args)
