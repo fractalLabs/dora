@@ -8,6 +8,7 @@
             [mongerr.core :refer :all]
             [dora.data :refer :all]
             [dora.p.adela :refer :all]
+            [dora.p.calificacion :refer :all]
             [dora.p.agente-web :refer :all]
             [dora.util :refer :all]
             [nillib.formats :refer :all]
@@ -346,13 +347,14 @@
 
 (defn inventory-resources-denormalized
   []
-  (let [inventories (db :adela-inventories)
-        datasets (mapcat flatten-inventory inventories)]
-    (mapcat flatten-inventory-dataset datasets)))
+  (mapcat flatten-inventory-dataset
+          (mapcat flatten-inventory
+                  (db :adela-inventories))))
 
 (defn ieda?
   [url]
-  (if (and (not (nil? url)) (db-findf :ieda {:url url}))
+  (if (and (not (nil? url))
+           (db-findf :ieda {:url url}))
     true
     false))
 
@@ -366,16 +368,18 @@
    (try (let [url (:downloadURL (:resource result))
               resource (resource url)
               dataset (dataset resource)
-              metadata (resource-metadata (:id resource))]
+              metadata (resource-metadata (:id resource))
+              recommendations (remove string?
+                                      (recommendations url metadata (:resource result) todays-broken))]
           (assoc {:adela result}
                  :ckan {:resource resource
                         :dataset (dissoc dataset :resources)}
                  :analytics {:downloads {:total (analytics url analytics-data)}}
                  :file-metadata metadata
-                 :recommendations (remove string?
-                                          (recommendations url metadata (:resource result) todays-broken))
+                 :recommendations recommendations
                  :id (str (:id (:dataset result)))
-                 :ieda (ieda? url)))
+                 ;:ieda (ieda? url)
+                 :calificacion (calificacion result recommendations)))
         (catch Exception e (println "Exception: " e)))))
 
 
