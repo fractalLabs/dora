@@ -11,13 +11,14 @@
       (empty? (:theme dataset))
       (broken-link-recommendation? recommendations)))
 
-(defn falla-plata [dataset]
-  (or (nil? (-> dataset :publisher :name))      (nil? (-> dataset :publisher :email))
+(defn falla-plata [dataset resource recommendations]
+  (or (nil? (-> dataset :publisher :name))
+      (nil? (-> dataset :publisher :email))
       ; en el "algoritmo" original salia tmb funciona_la_url(dataset.publisher.url)
       ))
 
 (defn falla-oro [dataset resource recommendations]
-                                        ;cotejar contra la accrualPeriodicity
+   ;cotejar contra la accrualPeriodicity
   (empty? recommendations))
 
 (defn calificacion [adela recommendations]
