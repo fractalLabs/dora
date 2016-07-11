@@ -11,7 +11,8 @@
             [mongerr.core :refer [db-find db-findf db-text-search]]
             [nillib.tipo :refer :all]
             [noir.response :as resp]
-            [noir.session :as session])
+            [noir.session :as session]
+            [clojure.string :as str])
   (:import (java.io StringWriter)
            (java.util.concurrent TimeoutException)))
 
@@ -176,13 +177,18 @@
       replacement
       expr))
 
+(def blacklisted-keys [:prefin :expr :jsonp])
+
+(defn replace-map [args]
+  (str/replace (:expr args) "{{map}}" (str (apply dissoc args blacklisted-keys))))
+
 (defn repl-route
   "Routing and jsonifying output"
   [args]
   (let [expr (if-let [prefn (args :prefn)]
                (str "(" prefn (args :expr) ")")
                (replace-nil (args :expr) " "))
-        return (eval-wrapper expr)
+        return (eval-wrapper (replace-map (assoc args :expr expr)))
         jsonp (args :jsonp)]
     (try (spit "repl-route.log"           ;"/var/log/repl-route.log"
                (str args "\n")
