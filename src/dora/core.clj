@@ -46,7 +46,7 @@
    (blacklist-symbols
     '#{alter-var-root intern eval catch
        load-string load-reader addMethod  ns-resolve resolve find-var
-       *read-eval* ns-publics ns-unmap set! ns-map ns-interns the-ns
+       *read-eval* ns-unmap set! ns-map ns-interns the-ns ;ns-publics
        push-thread-bindings pop-thread-bindings future-call agent send
        send-off slurp pcalls pvals in-ns System/out System/in System/err
        with-redefs-fn Class/forName})
