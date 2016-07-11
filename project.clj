@@ -1,6 +1,7 @@
 (defproject dora "1.0.0-SNAPSHOT"
   :description "Dora la exploradora de datos"
-  :dependencies [[clj-http "3.1.0"]
+  :dependencies [[cast "0.1.0-SNAPSHOT"]
+                 [clj-http "3.1.0"]
                  [clj-pdf "2.2.1"]
                  [clj-time "0.12.0"]
                  ;[clj-zendesk "0.1.0"]

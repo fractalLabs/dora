@@ -179,7 +179,9 @@
 
 (def blacklisted-keys [:prefin :expr :jsonp])
 
-(defn replace-map [args]
+(defn replace-map
+  "This replaces {{map}} for a map with all the arguments"
+  [args]
   (str/replace (:expr args) "{{map}}" (str (apply dissoc args blacklisted-keys))))
 
 (defn repl-route
