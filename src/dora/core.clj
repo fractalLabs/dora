@@ -61,13 +61,14 @@
            :context (-> (permissions (java.security.AllPermission.)) domain context)
            :jvm? true
            :timeout 180000
-           :init '(do (require '[monger.operators :refer :all]
-                               '[mongerr.core :refer [db db-find db-findf db-geo db-text-search]]
+           :init '(do (require '[cast.core :refer :all]
+                               '[clojure.repl :refer [doc find-doc]]
                                '[clojure.set :refer :all]
                                '[clojure.string :as s]
-                               '[clojure.repl :refer [doc find-doc]])
-                      (require '[dora.p.agente-web :refer [errors-today sure-errors]]
-                               '[dora.p.data-core :refer :all])
+                               '[dora.p.agente-web :refer [errors-today sure-errors]]
+                               '[dora.p.data-core :refer :all]
+                               '[monger.operators :refer :all]
+                               '[mongerr.core :refer [db db-find db-findf db-geo db-text-search]])
                       (future (Thread/sleep 9000000)
                               (-> *ns* .getName remove-ns)))))
 

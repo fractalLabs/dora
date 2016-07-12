@@ -1,6 +1,7 @@
 (ns dora.repl
   "Main entry point for repl use"
-  (:require [cemerick.friend :as friend]
+  (:require [cast.core :refer :all]
+            [cemerick.friend :as friend]
             (cemerick.friend [workflows :as workflows]
                              [credentials :as creds])
             [clj-http.client :as http]
@@ -20,6 +21,7 @@
             [dora.digitalization :refer :all]
             [dora.p.adela :refer :all]
             [dora.p.data-core :refer :all]
+            [dora.importer :refer :all]
             [dora.p.download :refer :all]
             [dora.pro-file :refer :all]
             [dora.util :refer :all]
