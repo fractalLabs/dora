@@ -48,6 +48,7 @@
   (println (:collection params) " " (dissoc params :collection))
   (json (db-find (:collection params)
                  (parse-strings (dissoc params :collection)))))
+
 (def app-routes
   [(ANY "/" [:as {params :params}]
         (do (println "Request: " params)
@@ -83,7 +84,8 @@
                                    (friend/current-authentication))))
    (route/not-found "<h1>404 Not Found</h1>")])
 
-(defn cors [routes]
+(defn cors
+  [routes]
   (wrap-cors routes :access-control-allow-origin [#".*"]
              :access-control-allow-methods [:get :put :post :delete]))
 
