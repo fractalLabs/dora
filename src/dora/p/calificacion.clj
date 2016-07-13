@@ -13,7 +13,7 @@
 
 (defn falla-plata [dataset resource recommendations]
   (or (nil? (-> dataset :publisher :name))
-      (nil? (-> dataset :publisher :email))
+      (nil? (-> dataset :publisher :mbox))
       ; en el "algoritmo" original salia tmb funciona_la_url(dataset.publisher.url)
       ))
 
