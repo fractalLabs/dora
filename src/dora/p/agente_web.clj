@@ -251,12 +251,27 @@
                       (t/days 1))
              t))
 
+(defn last-2days?
+  "Is t more recent than 48h ago?"
+  [t]
+  (t/before? (t/minus (t/now)
+                      (t/days 1))
+             t))
+
 (defn broken-today
   ([] (filter #(last-day? (:now %))
               (broken)))
   ([url]
    (if-not (nil? url)
      (first (filter #(last-day? (:now %))
+                    (broken {:url url}))))))
+
+(defn broken-yesterday
+  ([] (filter #(last-2days? (:now %))
+              (broken)))
+  ([url]
+   (if-not (nil? url)
+     (first (filter #(last-2days? (:now %))
                     (broken {:url url}))))))
 
 (defn sure-errors []
