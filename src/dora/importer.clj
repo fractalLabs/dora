@@ -2,7 +2,7 @@
   (:require [digitalize.core :refer :all]
             [dora.util :refer :all]
             [mongerr.core :refer [db-insert]]
-            [nillib.formats :refer [csv]]))
+            [formaterr.core :refer [csv]]))
 
 (defn extract-csvs [folder]
   (let [files (ls-fr folder)]

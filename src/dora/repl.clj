@@ -30,7 +30,7 @@
             [environ.core :refer [env]]
             [nillib.text :refer :all]
             [nillib.tipo :refer :all]
-            [nillib.formats :refer :all]
+            [formaterr.core :refer :all]
             [nlp.sentiment :refer :all]
             [monger.collection :as mc]
             [monger.operators :refer :all]

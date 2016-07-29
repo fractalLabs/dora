@@ -5,7 +5,7 @@
             [clojure.string :as s]
             [clj-http.client :as http]
             [mongerr.core :refer :all]
-            [nillib.formats :refer :all]))
+            [formaterr.core :refer :all]))
 
 (defn distinct-by
   "Returns a lazy sequence of the elements of coll, removing any elements that
