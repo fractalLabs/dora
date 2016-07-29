@@ -1,12 +1,12 @@
 (ns dora.validations
   (:require [clojure.string :as s]
             [mongerr.core :refer [db-find db-update]]
+            [digitalize.core :refer :all]
             [dora.data :refer :all]
             [dora.p.download :refer [recurso->file
                                   recursos-descargados tmpdir]]
             [dora.pro-file :refer [shsh]]
-            [dora.util :refer :all]
-            [nillib.worm :refer [digitalize]]))
+            [dora.util :refer :all]))
 
 (defn file
 	  "apply shell function file to 'name'"

@@ -4,13 +4,13 @@
             [clj-http.util :refer :all]
             [clojure.data.json :as json]
             [clojure.string :as s]
+            [digitalize.core :refer :all]
             [mongerr.core :refer :all]
             [monger.core :as mg]
             [monger.collection :as mc]
             [monger.operators :refer :all]
             monger.joda-time
-            [nillib.formats :refer :all]
-            [nillib.worm :refer :all])
+            [nillib.formats :refer :all])
   (:import [com.mongodb MongoOptions ServerAddress]))
 
 (defn get-json

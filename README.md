@@ -10,6 +10,8 @@ Y tener una variable de entorno MONGO_URL con la url con los datos de conexión 
 
 Clona el proyecto y haz `lein repl`
 
+Copia `.java.policy` a `~/.java.policy`
+
 Para arrancar el web server en el puerto `5555`, haz `(run)
 
 Para popular las bases de datos (o refrescarlas), haz `(data-core)`

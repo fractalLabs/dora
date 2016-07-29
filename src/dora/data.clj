@@ -4,11 +4,11 @@
             [clojure.set :refer :all]
             [clojure.string :as s]
             [clojure.zip :as zip]
+            [digitalize.core :refer :all]
             [environ.core :refer [env]]
             [mongerr.core :refer :all]
             [dora.util :refer :all]
             [nillib.formats :refer :all]
-            [nillib.worm :refer :all]
             [org.httpkit.client :as http]))
 
 (defn copy

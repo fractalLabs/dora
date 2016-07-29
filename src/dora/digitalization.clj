@@ -3,6 +3,7 @@
   (:require [clj-time.format :as f]
             [clj-time.core :as t]
             [clojure.string :as s]
+            [digitalize.core :refer :all]
             [mongerr.core :refer :all]
             [dora.util :refer :all]
             [monger.collection :as mc]
@@ -11,8 +12,7 @@
             [monger.db :refer [get-collection-names]]
             monger.joda-time
             [monger.operators :refer :all]
-            [nillib.tipo :refer :all]
-            [nillib.worm :refer :all]))
+            [nillib.tipo :refer :all]))
 
 (defn char-type-regex [s]
   (if (re-find #"\d" s)

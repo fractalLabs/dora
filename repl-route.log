@@ -1,0 +1,6 @@
+{}
+{:expr "1"}
+{:expr "(dash-update 6 [])"}
+{:expr "(bean (dash-update 6 []))"}
+{:expr "(bean 1)"}
+{:expr "bean"}

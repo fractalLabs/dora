@@ -13,6 +13,7 @@
                  [commons-lang/commons-lang "2.6"]
                  [com.novemberain/monger "3.0.2"]
                  [compojure "1.5.1"]
+                 [digitalize "0.1.0-SNAPSHOT"]
                  [dgm-analytics "0.1.0-SNAPSHOT"]
                  [environ "1.0.3"]
                  [http-kit "2.1.19"]

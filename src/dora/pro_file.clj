@@ -5,6 +5,7 @@
             [clojure.repl :refer :all]
             [clojure.set :refer :all]
             [clojure.string :as s]
+            [digitalize.core :refer :all]
             [mongerr.core :refer :all]
             [dora.data :refer :all]
             [dora.p.adela :refer :all]
@@ -13,7 +14,6 @@
             [dora.util :refer :all]
             [nillib.formats :refer :all]
             [nillib.text :refer :all]
-            [nillib.worm :refer :all]
             [ring.util.codec :as c]))
 
 (defn shsh

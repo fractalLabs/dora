@@ -6,6 +6,7 @@
             [clojure.core.async :as a :refer [<! go-loop]]
             [clojure.set :refer :all]
             [clojure.string :as s]
+            [digitalize.core :refer :all]
             ;[dgm-analytics.core :refer :all]
             [dora.data :refer :all]
             [dora.p.adela :refer :all]
@@ -15,8 +16,7 @@
             [dora.pro-file :refer :all]
             [monger.operators :refer :all]
             [mongerr.core :refer :all]
-            [nillib.formats :refer :all]
-            [nillib.worm :refer :all])
+            [nillib.formats :refer :all])
   (:import [org.joda.time DateTimeConstants DateTimeZone]))
 
 (defn dc-add-query

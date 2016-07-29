@@ -68,6 +68,8 @@
                                '[dora.p.agente-web :refer [errors-today sure-errors]]
                                '[dora.p.data-core :refer :all]
                                '[monger.operators :refer :all]
+                               'monger.joda-time
+                               'monger.json
                                '[mongerr.core :refer [db db-find db-findf db-geo db-text-search]])
                       (future (Thread/sleep 9000000)
                               (-> *ns* .getName remove-ns)))))

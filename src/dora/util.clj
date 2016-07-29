@@ -54,6 +54,12 @@
   ([dir]
    (.list (io/file dir))))
 
+(defn shell-wrapper [cmd & args]
+  (let [response (apply shs cmd args)]
+    (if (empty? response)
+      :ok
+      response)))
+
 (defn mv
   "move a file from a to b"
   [a b]
@@ -61,6 +67,9 @@
     (if (empty? response)
       :ok
       response)))
+
+(defn rm [& files]
+  (apply shell-wrapper "rm" files))
 
 (defn ends-in-dash? [s]
   (= \/ (last s)))

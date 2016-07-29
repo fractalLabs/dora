@@ -1,11 +1,8 @@
 (ns dora.importer
-  (:require [dora.util :refer :all]
+  (:require [digitalize.core :refer :all]
+            [dora.util :refer :all]
             [mongerr.core :refer [db-insert]]
-            [nillib.formats :refer [csv]]
-            [nillib.worm :refer :all]))
-
-
-
+            [nillib.formats :refer [csv]]))
 
 (defn extract-csvs [folder]
   (let [files (ls-fr folder)]
@@ -22,4 +19,4 @@
                             (mv % errors)))
                (ls-fr folder))))
 
-                                        ;(digest :test-profeco "/Users/nex/Desktop/testin/origin" "/Users/nex/Desktop/testin/destiny" "/Users/nex/Desktop/testin/errors")
+;(digest :test-profeco "/Users/nex/Desktop/testin/origin" "/Users/nex/Desktop/testin/destiny" "/Users/nex/Desktop/testin/errors")
