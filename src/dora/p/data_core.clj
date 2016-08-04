@@ -23,7 +23,7 @@
   [campo value-fn]
   (db-update :data-core
              {:campo campo}
-             {:query-en-data-core value-fn}))
+             {:query value-fn}))
 
 (defn dc-update
   ([campo value-fn]
@@ -35,9 +35,9 @@
                            (eval (read-string value-fn)))})
      (catch Exception e (println "caught-exception: dc-update ->>"))))
   ([e]
-   (dc-update (:campo e) (:query-en-data-core e)))
+   (dc-update (:campo e) (:query e)))
   ([]
-   (map dc-update  (remove #(nil? (:query-en-data-core %)) (db-find :data-core)))))
+   (map dc-update  (remove #(nil? (:query %)) (db-find :data-core)))))
 
 (def drive-files {:instituciones "https://docs.google.com/feeds/download/spreadsheets/Export?key=1swzmgetabUT25eog-g6pdgRlc8x9uqz3iCNoruhdnxE&exportFormat=csv&gid=2050308732"
                   :ipda "https://docs.google.com/feeds/download/spreadsheets/Export?key=1swzmgetabUT25eog-g6pdgRlc8x9uqz3iCNoruhdnxE&exportFormat=csv&gid=1077082165"})
