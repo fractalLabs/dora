@@ -55,24 +55,32 @@
   (do (db-delete coll)
       (db-insert coll (remove-nils (f)))))
 
+;; from http://stackoverflow.com/questions/1217131/recursive-doall-in-clojure
+(defn doall-recur [s]
+  (if (seq? s)
+    (doall (map doall-recur
+                s))
+    s))
+
 (defn data-core []
-  (doall [(update-all-ckan)
-          (update-db :instituciones instituciones)
-          (update-db :zendesk-tickets all-tickets)
-          (update-db :zendesk-organizations all-organizations)
-          (update-db :zendesk-satisfaction all-satisfaction)
-          (update-db :zendesk-users all-users)
-          (update-db :adela-catalogs adela-catalogs)
-          ;(update-db :adela-plans adela-plans)
-          (update-db :adela-organizations adela-organizations)
-          (update-db :adela-inventories adela-inventory)
+  (doall-recur
+   [(update-all-ckan)
+    (update-db :instituciones instituciones)
+    (update-db :zendesk-tickets all-tickets)
+    (update-db :zendesk-organizations all-organizations)
+    (update-db :zendesk-satisfaction all-satisfaction)
+    (update-db :zendesk-users all-users)
+    (update-db :adela-catalogs adela-catalogs)
+                                        ;(update-db :adela-plans adela-plans)
+    (update-db :adela-organizations adela-organizations)
+    (update-db :adela-inventories adela-inventory)
                                         ;(update-db :google_analytics download-data)
-          (mv-old-file)
-          ;(get-status-1)
-          (save-broken-links)
-          (validate-dgm)
-          (update-db :data-fusion dora-view-inventory)
-          (dc-update)]))
+    (mv-old-file)
+                                        ;(get-status-1)
+    (save-broken-links)
+    (validate-dgm)
+    (update-db :data-fusion dora-view-inventory)
+    (dc-update)]))
 
 (defn today-at
   ([] (today-at 0 0 0 0))
