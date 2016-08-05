@@ -56,14 +56,14 @@
       (db-insert coll (remove-nils (f)))))
 
 ;; from http://stackoverflow.com/questions/1217131/recursive-doall-in-clojure
-(defn doall-recur [s]
+(defn doall-recur& [s]
   (if (seq? s)
-    (doall (map doall-recur
+    (doall (map doall
                 s))
     s))
 
 (defn data-core []
-  (doall-recur
+  (doall-recur&
    [(update-all-ckan)
     (update-db :instituciones instituciones)
     (update-db :zendesk-tickets all-tickets)
