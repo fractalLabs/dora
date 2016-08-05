@@ -84,7 +84,7 @@
 (defn all-ckan
   "all data on all packages"
   []
-  (digitalize (map package-show (package-list))))
+  (digitalize (map package-show (package-list)) :clean-numbers false))
 
 (defn email
   "Exctract email from a dataset"
