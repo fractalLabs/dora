@@ -38,5 +38,5 @@
   :main dora.server
   :plugins [[lein-ring "0.9.7"]]
   :repl-options {:init-ns dora.repl
-                 :timeout 180000}
+                 :timeout 1800000}
   :ring {:handler dora.server/app :port 5555})
