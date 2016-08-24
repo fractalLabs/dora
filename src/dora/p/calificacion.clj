@@ -5,7 +5,7 @@
                    recommendations)))
 
 (defn falla-bronce [dataset resource recommendations]
-  (or (empty? (:title dataset))
+  (or (empty? (:issued dataset)) (empty? (:title dataset))
       (empty? (:description dataset))
       (empty? (:keyword dataset))
       (empty? (:theme dataset))
