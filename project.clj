@@ -11,6 +11,7 @@
                  [com.cemerick/url "0.1.1"]
                  [com.draines/postal "2.0.0"]
                  [commons-lang/commons-lang "2.6"]
+                 [commons-validator "1.5.1"]
                  [com.novemberain/monger "3.0.2"]
                  [compojure "1.5.1"]
                  [digitalize "0.1.0-SNAPSHOT"]

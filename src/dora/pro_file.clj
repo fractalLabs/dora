@@ -14,14 +14,18 @@
             [dora.util :refer :all]
             [formaterr.core :refer :all]
             [nillib.text :refer :all]
-            [ring.util.codec :as c]))
+            [ring.util.codec :as c])
+  (:import org.apache.commons.validator.UrlValidator))
+
+(defn valid-url? [url-str]
+  (let [validator (UrlValidator.)]
+    (.isValid validator url-str)))
 
 (defn shsh
   "Execute command in shell"
   [& command]
   (let [result (sh "/bin/sh" "-c" (s/join " " command))]
     (str (:err result) (:out result))))
-
 
 (defmacro try-catch [body]
   `(try
@@ -308,8 +312,14 @@
 
 (defn resource
   "Find a resource with a URL"
-  [url]
-  (db-findf :resources {:url url}))
+  [o]
+  (if (map? o)
+    (db-findf :resources o)
+    (if (valid-url? o)
+      (db-findf :resources {:url o})
+      (or (db-findf :resources {:name o})
+          (db-findf :resources {:id o})
+          (db-find :resources {:dataset_id o})))))
 
 (defn resource-metadata
   "Find stored metadata for a id"
