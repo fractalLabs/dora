@@ -5,7 +5,8 @@
             [clojure.string :as s]
             [clj-http.client :as http]
             [mongerr.core :refer :all]
-            [formaterr.core :refer :all]))
+            [formaterr.core :refer :all]
+            [clojure.string :as str]))
 
 (defn distinct-by
   "Returns a lazy sequence of the elements of coll, removing any elements that
@@ -36,18 +37,40 @@
         (throw (ex-info "Repository already exists" {:status :existant}))))
     (:err result)))
 
-(defn pull []
-  (shs "git" "pull"))
+(defn pull
+  ([]
+   (shs "git" "pull"))
+  ([dir]
+   (shs "git" "pull" :dir dir))
+  ([dir origin branch]
+   (shs "git" "pull" origin branch)))
 
-(defn push []
-  (shs "git" "push"))
+(defn push
+  ([]
+   (shs "git" "push"))
+  ([dir]
+   (shs "git" "push" :dir dir))
+  ([dir remote branch]
+   (shs "git" "push" remote branch :dir dir)))
 
-(defn adda []
-  (shs "git" "add" "-A"))
+(defn push-force
+  ([]
+   (shs "git" "push" "--force"))
+  ([dir]
+   (shs "git" "push" "--force" :dir dir))
+  ([dir remote branch]
+   (shs "git" "push" remote branch "--force" :dir dir)))
+(defn adda
+  ([]
+   (shs "git" "add" "-A"))
+  ([dir]
+   (shs "git" "add" "-A" :dir dir)))
 
 (defn commit
   ([] (commit "save"))
-  ([msg] (shs "git" "commit" "-m" msg)))
+  ([msg] (shs "git" "commit" "-m" msg))
+  ([msg dir]
+   (shs "git" "commit" "-m" msg :dir dir)))
 
 (defn ggg []
   (adda)
@@ -57,10 +80,33 @@
 (defn gs []
   (shs "git" "status"))
 
+(defn branch [] (-> (sh "git" "rev-parse" "--abbrev-ref" "HEAD") :out str/trim))
+
+(defn checkout
+  ([dir branch]
+   (sh "git" "checkout" branch :dir dir)))
+
+(defn checkout-B
+  ([dir branch]
+   (sh "git" "checkout" "-B" branch :dir dir)))
+
+(defn git-merge []
+  (shs "git" "merge" "master"))
+
+(defn dir-with-slash [dir]
+  (if (= "/" (last dir))
+    dir
+    (str dir "/")))
+
+(defn ls&
+  ([] (ls& "."))
+  ([dir]
+   (map #(str (dir-with-slash dir) %) (.list (io/file dir)))))
+
 (defn ls
   ([] (ls "."))
   ([dir]
-   (.list (io/file dir))))
+    (.list (io/file dir))))
 
 (defn shell-wrapper [cmd & args]
   (let [response (apply shs cmd args)]
