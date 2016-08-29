@@ -28,6 +28,14 @@
     ;(println (:exit result))
     (s/trim (:out result))))
 
+(defn clone [repo route]
+  (let [result (sh "git" "clone" (str "https://github.com/" repo) route)]
+    (if (re-find #"not found" (:err result))
+      (throw (ex-info "Repository not found" {:status :non-existant}))
+      (if (re-find #"already exists and is not an empty directory" (:err result))
+        (throw (ex-info "Repository already exists" {:status :existant}))))
+    (:err result)))
+
 (defn pull []
   (shs "git" "pull"))
 
