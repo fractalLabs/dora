@@ -359,7 +359,8 @@
   []
   (mapcat flatten-inventory-dataset
           (mapcat flatten-inventory
-                  (db :adela-inventories))))
+                  (db :adela-catalogs;; TODO: cuando entre en vigor el nuevo adela, cambiar a: :adela-inventories
+                      ))))
 
 (defn ieda?
   [url]
