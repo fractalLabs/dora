@@ -28,8 +28,10 @@
 (defn repo [resource]
   (try (clone-mirror resource)
        (catch Exception e
-         (repo-mirror resource)
-         (clone-mirror resource))))
+         (if (= (:status (ex-data e)) :non-existant)
+           (do
+             (repo-mirror resource)
+             (clone-mirror resource))))))
 
 (defn checkout
   ([dir]
