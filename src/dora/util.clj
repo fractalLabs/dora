@@ -101,7 +101,8 @@
 (defn ls&
   ([] (ls& "."))
   ([dir]
-   (map #(str (dir-with-slash dir) %) (.list (io/file dir)))))
+   (rest (remove #(re-find #"git"%) (map #(.getPath %)
+                                         (file-seq (clojure.java.io/file dir)))))))
 
 (defn ls
   ([] (ls "."))

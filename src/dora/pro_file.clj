@@ -393,6 +393,7 @@
                  :calificacion (calificacion result recommendations)))
         (catch Exception e (println "Exception: " e)))))
 
+(defn data-fusion [] (dora-view-inventory))
 
 (defn save-fusion-inventory
   ([] (save-fusion-inventory (inventory-resources-denormalized)))
