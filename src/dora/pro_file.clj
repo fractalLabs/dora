@@ -327,9 +327,11 @@
   (db-findf :resource-metadata {:id id}))
 
 (defn dataset
-  "Given a Resource, return its dataset metadata"
-  [resource]
-  (db-findf :datasets {:id (:dataset_id resource)}))
+  "Given a Resource or dataset name, return its dataset metadata"
+  [o]
+  (if (map? o)
+    (db-findf :datasets {:id (:dataset_id o)})
+    (db-findf :datasets {:name o})))
 
 (defn analytics
   "get the stored google analytics history"
