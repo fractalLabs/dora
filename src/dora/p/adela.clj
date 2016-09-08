@@ -4,7 +4,7 @@
             [monger.operators :refer :all]
             [mongerr.core :refer :all]))
 
-(def adela-url "http://162.243.229.121" ;"http://adela.datos.gob.mx/"
+(def adela-url "http://162.243.229.121/" ;"http://adela.datos.gob.mx/"
   )
 
 (defn adela-api [& endpoint]
