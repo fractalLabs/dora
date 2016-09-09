@@ -29,6 +29,7 @@
                  [org.clojure/core.cache "0.6.5"]
                  [org.clojure/data.json "0.2.6"]
                  [org.clojure/tools.logging "0.3.1"]
+                 [org.clojure/tools.reader "1.0.0-beta3"]
                  [ring/ring-json "0.4.0"]
                  [ring-cors "0.1.8"];"0.1.7"
                  [ring-middleware-format "0.7.0"]
