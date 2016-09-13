@@ -5,7 +5,7 @@
 
 (defn buda
   [s]
-  (:results (json (slurp (str "http://api.datos.gob.mx/v1/" s "?pageSize=10000") s))))
+  (:results (json (slurp (str "http://api.datos.gob.mx/v1/" s "?pageSize=10000")))))
 
 (defn rkeys [rel]
   (keys (first rel)))
