@@ -9,7 +9,7 @@
             [clj-time.core :as t]
             [clojure.java.shell :as sh]
             [clojure.set :refer :all]
-            [clojure.string :as s]
+            [clojure.string :as str]
             [cloogle.core :refer :all]
             ;[dgm-analytics.core :refer :all]
             [digitalize.core :refer :all]
