@@ -23,25 +23,25 @@
                                 "regionalizacion-funcional-de-mexico"]))
 
 (def ^:dynamic refineria-dir "/Users/nex/mirrors/")
-(def ^:dynamic gh-org "mxabierto-mirror/")
+(def ^:dynamic gh-org "mxabierto-mirror")
 
 (defn emap [& args]
   (doall (apply map args)))
 
 (defn resource-name [resource]
-  (standard-name (:name resource)))
+  (str/join (take 100 (standard-name (:name resource)))))
 
 (defn mirror-dir [resource]
   (str refineria-dir (resource-name resource)))
 
 (defn clone-mirror [resource]
   (let [le-name (resource-name resource)]
-    (clone (str gh-org le-name)
+    (clone (str gh-org "/" le-name)
            (str refineria-dir le-name))))
 
 (defn repo-mirror [resource]
   (let [le-name (resource-name resource)]
-    (create-org-repo "mxabierto-mirror"
+    (create-org-repo gh-org
                      le-name
                      {:auth (env :gh)
                       :description (:description resource)})))
@@ -118,6 +118,10 @@
     (refina-tsvs files)
     (refina-psvs files)))
 
+(defmacro in-buda [& body]
+  `(binding [*db* (:db (mg/connect-via-uri "mongodb://localhost:27027/buda"))]
+     ~@body))
+
 (defn ls-buda []
   (binding [*db* (:db (mg/connect-via-uri "mongodb://localhost:27027/buda"))]
       (db)))
@@ -154,4 +158,5 @@
        (commit (str "Generado por la refinería en: " (t/now)) dir)
        (push-force dir "origin" "refineria")
        (apify resource)
-       (catch Exception e (println e "\nCould not finish on: " (:name resource)))))))
+       (catch Exception e (println e "\nCould not finish on: " (:name resource))
+              (spit "log.log" (json {:name (:name resource) :e e})))))))

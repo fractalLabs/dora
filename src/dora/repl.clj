@@ -35,6 +35,7 @@
             [formaterr.core :refer :all]
             [nlp.sentiment :refer :all]
             [monger.collection :as mc]
+            [monger.core :as mg]
             [monger.operators :refer :all]
             [ring.adapter.jetty :refer :all]
             [ring.util.codec :as c]))
