@@ -38,7 +38,7 @@
                  ;[com.rpl/specter "0.9.3"]
                  [jarohen/chime "0.1.9"]
                  [formaterr "0.1.0-SNAPSHOT"]]
-  :jvm-opts ["-Djava.security.policy=.java.policy" "-Xmx16g"]
+  :jvm-opts ["-Djava.security.policy=.java.policy" "-Xmx32g"]
   :main dora.server
   :plugins [[lein-ring "0.9.7"]]
   :repl-options {:init-ns dora.repl
