@@ -64,21 +64,27 @@
 
 (defn data-core []
   (doall-recur
-   [(update-all-ckan)
+   [(println "updating ckan")
+    (update-all-ckan)
     (update-db :instituciones instituciones)
+    (println "updating zendesk")
     (update-db :zendesk-tickets all-tickets)
     (update-db :zendesk-organizations all-organizations)
     (update-db :zendesk-satisfaction all-satisfaction)
     (update-db :zendesk-users all-users)
+    (println "updating adela")
+
     (update-db :adela-catalogs adela-catalogs)
                                         ;(update-db :adela-plans adela-plans)
     (update-db :adela-organizations adela-organizations)
     (update-db :adela-inventories adela-inventory)
                                         ;(update-db :google_analytics download-data)
-    (mv-old-file)
-                                        ;(get-status-1)
+    (println "cleaning up old files")
+    (mv-old-file)               ;(get-status-1)
+    (println "running: validate-dgm")
     (save-broken-links)
     (validate-dgm)
+    (println "updating: dora-view-inventory" )
     (update-db :data-fusion dora-view-inventory)
     (dc-update)]))
 
