@@ -413,14 +413,11 @@
               metadata (resource-metadata (:id resource))
               recommendations (remove string?
                                       (recommendations url metadata resource todays-broken))]
-          (assoc {:ckan {:resource resource
-                         :dataset (dissoc dataset :resources)}
-                  :analytics {:downloads {:total (analytics url analytics-data)}}
-                  :file-metadata metadata
-                  :recommendations recommendations
-                  ;:calificacion (calificacion resource recommendations)
-                  })
-                 )
+          {:ckan {:resource resource
+                  :dataset (dissoc dataset :resources)}
+           :analytics {:downloads {:total (analytics url analytics-data)}}
+           :file-metadata metadata
+           :recommendations recommendations})
         (catch Exception e (println "Exception: " e)))))
 
 (defn data-fusion []
