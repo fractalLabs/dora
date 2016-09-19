@@ -395,7 +395,37 @@
                  :calificacion (calificacion result recommendations)))
         (catch Exception e (println "Exception: " e)))))
 
-(defn data-fusion [] (dora-view-inventory))
+(defn orphan-resources [inventories]
+  (let [inv-urls (map #(:downloadUrl (:resource (:adela %))) inventories)]
+    (filter #(empty? (filter (fn [url] (= url (% :url)))
+                             inv-urls))
+            (db :resources))))
+
+(defn dora-view-resources
+  ([inventories]
+   (let [analytics  (db :google_analytics)
+         broken (broken-today)]
+     (map #(dora-view-resources % analytics broken)
+          (orphan-resources inventories))))
+  ([resource analytics-data todays-broken]
+   (try (let [url (:url resource)
+              dataset (dataset resource)
+              metadata (resource-metadata (:id resource))
+              recommendations (remove string?
+                                      (recommendations url metadata resource todays-broken))]
+          (assoc {:ckan {:resource resource
+                         :dataset (dissoc dataset :resources)}
+                  :analytics {:downloads {:total (analytics url analytics-data)}}
+                  :file-metadata metadata
+                  :recommendations recommendations
+                  ;:calificacion (calificacion resource recommendations)
+                  })
+                 )
+        (catch Exception e (println "Exception: " e)))))
+
+(defn data-fusion []
+  (let [inventories (dora-view-inventory)]
+    (concat inventories (dora-view-resources inventories))))
 
 (defn save-fusion-inventory
   ([] (save-fusion-inventory (inventory-resources-denormalized)))

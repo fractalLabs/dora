@@ -85,7 +85,7 @@
     (save-broken-links)
     ;(validate-dgm)
     (println "updating: dora-view-inventory" )
-    (update-db :data-fusion dora-view-inventory)
+    (update-db :data-fusion data-fusion)
     (dc-update)]))
 
 (defn today-at
