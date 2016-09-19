@@ -396,7 +396,7 @@
         (catch Exception e (println "Exception: " e)))))
 
 (defn orphan-resources [inventories]
-  (let [inv-urls (map #(:downloadUrl (:resource (:adela %))) inventories)]
+  (let [inv-urls (map #(:downloadURL (:resource (:adela %))) inventories)]
     (filter #(empty? (filter (fn [url] (= url (% :url)))
                              inv-urls))
             (db :resources))))
