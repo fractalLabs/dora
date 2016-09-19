@@ -6,6 +6,7 @@
             [clojure.set :refer :all]
             [clojure.string :as s]
             [digitalize.core :refer :all]
+            [monger.operators :refer [$regex]]
             [mongerr.core :refer :all]
             [dora.data :refer :all]
             [dora.p.adela :refer :all]
@@ -339,7 +340,8 @@
    (try (:value (db-findf :google_analytics {:url url}))
         (catch java.lang.NullPointerException e)))
   ([url analytics-data]
-   (first (filter #(= url (:url %)) analytics-data))))
+   (first (filter #(re-find (re-pattern url) (:url %))
+                  analytics-data))))
 
 (defn inventory-resources
   []
@@ -374,10 +376,11 @@
 (defn dora-view-inventory    ;will expect entries from inventory-resources-denormalized
   ([]
    (let [analytics  (db :google_analytics)
+         analytics-views (db :google_analytics_views)
          broken (broken-today)]
-     (map #(dora-view-inventory % analytics broken)
+     (map #(dora-view-inventory % analytics analytics-views broken)
           (inventory-resources-denormalized))))
-  ([result analytics-data todays-broken]
+  ([result analytics-data analytics-data-views todays-broken]
    (try (let [url (:downloadURL (:resource result))
               resource (resource url)
               dataset (dataset resource)
@@ -387,7 +390,8 @@
           (assoc {:adela result}
                  :ckan {:resource resource
                         :dataset (dissoc dataset :resources)}
-                 :analytics {:downloads {:total (analytics url analytics-data)}}
+                 :analytics {:downloads {:total (analytics url analytics-data)}
+                             :pageviews {:total (analytics (:id resource) analytics-data-views)}}
                  :file-metadata metadata
                  :recommendations recommendations
                  :id (str (:id (:dataset result)))
@@ -404,10 +408,11 @@
 (defn dora-view-resources
   ([inventories]
    (let [analytics  (db :google_analytics)
+         analytics-views (db :google_analytics_views)
          broken (broken-today)]
-     (map #(dora-view-resources % analytics broken)
+     (map #(dora-view-resources % analytics analytics-views broken)
           (orphan-resources inventories))))
-  ([resource analytics-data todays-broken]
+  ([resource analytics-data analytics-data-views todays-broken]
    (try (let [url (:url resource)
               dataset (dataset resource)
               metadata (resource-metadata (:id resource))
@@ -415,7 +420,8 @@
                                       (recommendations url metadata resource todays-broken))]
           {:ckan {:resource resource
                   :dataset (dissoc dataset :resources)}
-           :analytics {:downloads {:total (analytics url analytics-data)}}
+           :analytics {:downloads {:total (analytics url analytics-data)}
+                       :pageviews {:total (analytics (:id resource) analytics-data-views)}}
            :file-metadata metadata
            :recommendations recommendations})
         (catch Exception e (println "Exception: " e)))))
