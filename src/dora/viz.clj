@@ -10,30 +10,43 @@
 (defn rkeys [rel]
   (keys (first rel)))
 
-(defn pie [kx ky r]
-  (let [vx (map kx r)
-        ks (distinct vx)]
-    (map #(hash-map :label % :value (reduce + (map ky (filter (fn [m] (= % (kx m)))
-                                                              r))))
-         ks)))
+(defn reduce+ [coll]
+  (reduce + coll))
 
-(defn viz [file data]
+(defn pie
+  ([kx ky r]
+   (pie kx ky r reduce+))
+  ([kx ky r f]
+   (if (nil? f)
+     (pie kx ky r reduce+)
+     (let [vx (map kx r)
+           ks (distinct vx)]
+       (map #(hash-map :label % :value (f (map ky (filter (fn [m] (= % (kx m)))
+                                                          r))))
+            ks)))))
+
+(defn spit-file [file data]
   (spit file (json data)))
 
 (defn interactive-viz []
-  (print "recurso? ")
+  (println "recurso? ")
   (let [recurso-name (read-line)]
     (println "Procesando recurso. . .")
     (let [recurso (buda recurso-name)
           llaves (rkeys recurso)]
       (println "llaves: " (str/join ", " (map name llaves)))
-      (print "visualizacion? (pie) ")
+      (println "visualizacion? (pie) ")
       (let [la-viz (case (str/trim (read-line))
                      "pie" pie)]
-        (print "eje X? ")
-        (let [x (standard-keyword (read-line))]
-          (print "eje Y? ")
-          (let [y (standard-keyword (read-line))
-                archivo (read-line)
-                nombre-archivo (str recurso-name "-" (int (* 100 (rand))))]
-              (viz nombre-archivo (la-viz x y recurso))))))))
+        (case la-viz
+          pie (do
+                (println "agregacion: (default ")
+                (let [la-agregacion (str/trim (read-line))]
+
+                  (println "eje X? ")
+                  (let [x (standard-keyword (read-line))]
+                    (println "eje Y? ")
+                    (let [y (standard-keyword (read-line))
+                          archivo (read-line)
+                          nombre-archivo (str recurso-name "-" (int (* 100 (rand))))]
+                      (spit-file nombre-archivo (la-viz x y recurso la-agregacion)))))))))))
