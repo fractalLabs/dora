@@ -6,7 +6,6 @@
             [clojure.set :refer :all]
             [clojure.string :as s]
             [digitalize.core :refer :all]
-            [monger.operators :refer [$regex]]
             [mongerr.core :refer :all]
             [dora.data :refer :all]
             [dora.p.adela :refer :all]
@@ -340,8 +339,9 @@
    (try (:value (db-findf :google_analytics {:url url}))
         (catch java.lang.NullPointerException e)))
   ([url analytics-data]
-   (first (filter #(re-find (re-pattern url) (:url %))
-                  analytics-data))))
+   (if-not (empty? url)
+     (apply + (map :value (filter #(re-find (re-pattern url) (:url %))
+                                  analytics-data))))))
 
 (defn inventory-resources
   []
