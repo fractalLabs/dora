@@ -330,7 +330,7 @@
   "Given a Resource or dataset name, return its dataset metadata"
   [o]
   (if (map? o)
-    (db-findf :datasets {:id (:dataset_id o)})
+    (if-let [dataset-id (:dataset_id o)] (db-findf :datasets {:id dataset-id}))
     (db-findf :datasets {:name o})))
 
 (defn analytics
