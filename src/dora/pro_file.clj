@@ -392,7 +392,8 @@
                  :ckan {:resource resource
                         :dataset (dissoc dataset :resources)}
                  :analytics {:downloads {:total (analytics url analytics-data)}
-                             :pageviews {:total (analytics (:id resource) analytics-data-views)}}
+                             ;:pageviews {:total (analytics (:id resource) analytics-data-views)}
+                             }
                  :file-metadata metadata
                  :recommendations recommendations
                  :id (str (:id (:dataset result)))
@@ -411,7 +412,10 @@
    (let [analytics  (db :google_analytics)
          analytics-views (db :google_analytics_views)
          broken (broken-today)]
-     (map #(dora-view-resources % analytics analytics-views broken)
+     (map #(dora-view-resources %
+                                analytics
+                                analytics-views
+                                broken)
           (orphan-resources inventories))))
   ([resource analytics-data analytics-data-views todays-broken]
    (try (let [url (:url resource)
@@ -422,7 +426,8 @@
           {:ckan {:resource resource
                   :dataset (dissoc dataset :resources)}
            :analytics {:downloads {:total (analytics url analytics-data)}
-                       :pageviews {:total (analytics (:id resource) analytics-data-views)}}
+                      ;:pageviews {:total (analytics (:id resource) analytics-data-views)}
+                       }
            :file-metadata metadata
            :recommendations recommendations})
         (catch Exception e (println "Exception: " e)))))
