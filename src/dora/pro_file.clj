@@ -317,9 +317,10 @@
     (db-findf :resources o)
     (if (valid-url? o)
       (db-findf :resources {:url o})
-      (or (db-findf :resources {:name o})
-          (db-findf :resources {:id o})
-          (db-find :resources {:dataset_id o})))))
+      (if-not (empty? o)
+        (or (db-findf :resources {:name o})
+            (db-findf :resources {:id o})
+            (db-find :resources {:dataset_id o}))))))
 
 (defn resource-metadata
   "Find stored metadata for a id"
