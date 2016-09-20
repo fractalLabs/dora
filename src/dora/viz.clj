@@ -36,17 +36,15 @@
           llaves (rkeys recurso)]
       (println "llaves: " (str/join ", " (map name llaves)))
       (println "visualizacion? (pie) ")
-      (let [la-viz (case (str/trim (read-line))
-                     "pie" pie)]
+      (let [la-viz (str/trim (read-line))]
         (case la-viz
-          pie (do
+          "pie" (do
                 (println "agregacion: (default ")
                 (let [la-agregacion (str/trim (read-line))]
-
                   (println "eje X? ")
                   (let [x (standard-keyword (read-line))]
                     (println "eje Y? ")
                     (let [y (standard-keyword (read-line))
                           archivo (read-line)
                           nombre-archivo (str recurso-name "-" (int (* 100 (rand))))]
-                      (spit-file nombre-archivo (la-viz x y recurso la-agregacion)))))))))))
+                      (spit-file nombre-archivo (pie x y recurso la-agregacion)))))))))))
