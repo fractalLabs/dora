@@ -341,7 +341,8 @@
         (catch java.lang.NullPointerException e)))
   ([url analytics-data]
    (if-not (empty? url)
-     (apply + (map :value (filter #(re-find (re-pattern url) (:url %))
+     (apply + (map :value (filter #(try (re-find (re-pattern url) (:url %))
+                                        (catch Exception e (= url (:url %))))
                                   analytics-data))))))
 
 (defn inventory-resources
