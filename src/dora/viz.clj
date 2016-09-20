@@ -13,6 +13,9 @@
 (defn reduce+ [coll]
   (reduce + coll))
 
+(defmacro viz-variables []
+  `(println "x: " x))
+
 (defn pie
   ([kx ky r]
    (pie kx ky r reduce+))
@@ -39,7 +42,7 @@
       (let [la-viz (str/trim (read-line))]
         (case la-viz
           "pie" (do
-                (println "agregacion: (default ")
+                (println "agregacion: (default: reduce+) ")
                 (let [la-agregacion (str/trim (read-line))]
                   (println "eje X? ")
                   (let [x (standard-keyword (read-line))]
@@ -47,4 +50,5 @@
                     (let [y (standard-keyword (read-line))
                           archivo (read-line)
                           nombre-archivo (str recurso-name "-" (int (* 100 (rand))))]
+                      (viz-variables)
                       (spit-file nombre-archivo (pie x y recurso la-agregacion)))))))))))
