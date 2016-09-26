@@ -26,14 +26,23 @@
   ([kx ky r]
    (pie kx ky r reduce+))
   ([kx ky r f]
-   (println )
    (if (nil? f)
      (pie kx ky r reduce+)
      (let [vx (map kx r)
            ks (distinct vx)]
        (map #(pie-format % ((friendly-resolve f) (map ky (filter (fn [m] (= % (m kx)))
-                                             r))))
+                                                                 r))))
             ks)))))
+
+(defn barchart [kx ky r f]
+  (let [ks (distinct (map kx r))]
+    {:ejex kx
+     :ejey ky
+     :valores
+     (map #(zipmap [:label ky]
+                   [% (f (map ky (filter (fn [el-r] (= % (kx el-r)))
+                                         r)))])
+          ks)}))
 
 (defn spit-file [file data]
   (spit file (json data)))
