@@ -22,6 +22,9 @@
                                 "proyecciones-de-la-poblacion-de-mexico"
                                 "regionalizacion-funcional-de-mexico"]))
 
+(defn resource-urls [ds]
+  (:resources (dataset ds)))
+
 (def ^:dynamic refineria-dir "/Users/nex/mirrors/")
 (def ^:dynamic gh-org "mxabierto-mirror")
 
@@ -147,7 +150,8 @@
        (repo resource)
        (try
          (copy-resource resource)
-         (catch Exception e (println "unable to download " (:name resource))))
+         (catch Exception e (println "unable to download " (:name resource))
+                (spit "log.log" (json {:name (:name resource) :e (str e) :en 1}))))
        (adda dir)
        (commit (str "Generado por la refinería en: " (t/now)) dir)
        (push dir "origin" "master")
@@ -159,4 +163,4 @@
        (push-force dir "origin" "refineria")
        (apify resource)
        (catch Exception e (println e "\nCould not finish on: " (:name resource))
-              (spit "log.log" (json {:name (:name resource) :e e})))))))
+              (spit "log.log" (json {:name (:name resource) :e (str e) :en 2})))))))
