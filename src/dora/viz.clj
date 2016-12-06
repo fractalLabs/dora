@@ -30,9 +30,12 @@
      (pie kx ky r reduce+)
      (let [vx (map kx r)
            ks (distinct vx)]
-       (map #(pie-format % ((friendly-resolve f) (map ky (filter (fn [m] (= % (m kx)))
-                                                                 r))))
-            ks)))))
+       {:unidad (name ky)
+        :ancho 550
+        :valores
+        (map #(pie-format % ((friendly-resolve f) (map ky (filter (fn [m] (= % (m kx)))
+                                                                  r))))
+             ks)}))))
 
 
 (defn barchart [kx ky r f]
@@ -104,17 +107,14 @@
 (spit-file "/Users/nex/git/dataviz/piechart/partials/calidad general del agua por estacion.json" calidadviz)
 
 (def estacionesxestado (pie :estado :ja calidadagua count))
-(spit-file "/Users/nex/git/dataviz/piechart/partials/estaciones de calidad del agua por estado.json" calidadviz)
-
-
+(spit-file "/Users/nex/git/dataviz/piechart/partials/estaciones de calidad del agua por estado.json" estacionesxestado)
 
 (def residuos (digitalize (csv "/Users/nex/mirrors/residuos-solidos-urbanos-manejados-adecuadamente/Residuos s%F3lidos urbanos manejados adecuadamente datos.csv")))
 (def residuosviz (pie :entidad-federativa :2015 matricula-escuelas))
-(spit-file "/Users/nex/git/dataviz/piechart/partials/residuos solidos manejados adecuadamente por estado 2015.json" escuelasviz)
+(spit-file "/Users/nex/git/dataviz/piechart/partials/residuos solidos manejados adecuadamente por estado 2015.json" residuosviz)
 
-(def residuosviz (pie :entidad-federativa :2014 matricula-escuelas))
-(spit-file "/Users/nex/git/dataviz/piechart/partials/residuos solidos manejados adecuadamente por estado 2014.json" escuelasviz)
-
+(def residuosviz2014 (pie :entidad-federativa :2014 matricula-escuelas))
+(spit-file "/Users/nex/git/dataviz/piechart/partials/residuos solidos manejados adecuadamente por estado 2014.json" residuosviz2014)
 
 (def rezago-social-estatal (digitalize (csv "/Users/nex/mirrors/rezago-social-estatal/Rezago-social-2000-2005-2010_edos_DA.csv")))
 (def rezagoviz (pie :ent :pobtot-10 rezago-social-estatal))
