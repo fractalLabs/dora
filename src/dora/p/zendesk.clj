@@ -9,7 +9,8 @@
             [environ.core :refer [env]]
             [mongerr.core :refer :all]
             [nillib.formats :refer :all]
-            [nillib.text :refer :all]))
+            [nillib.text :refer :all]
+            [clojure.string :as str]))
 
 (def zen-auth {:basic-auth [(env :zendesk-email) (env :zendesk-password)]})
 
@@ -209,3 +210,63 @@ www.datos.gob.mx")]]
                                  (:now %))
                      (db-find :status-broken))]
     data))
+
+(defn genera-evidencia []
+  (map pdf-evidencia (pdfs-month-ligas-rotas)))
+
+(defn pdf-evidencia-pira [data num]
+  (pdf [{}
+        [:paragraph (str
+"Comentarios que Sugieren Atención a un Recurso de Datos
+
+
+Estimado Administrador de Datos,
+
+En un intento por mejorar el servicio de Datos Abiertos, perfeccionar los Recursos de Datos que las
+
+Dependencias de la Administración Pública publican y asegurar su accesibilidad y permanencia, esta
+
+Dirección General ha realizado un ejercicio de prueba ­con la intención de hacerlo permanente­ para
+
+comprobar el funcionamiento de la descarga de sus recursos de datos. Durante dicha prueba,
+
+detectamos posibles problemas con los siguientes recursos de datos bajo su responsabilidad:
+
+URLS:
+" (str/join "\n\n" data) "
+
+Fecha de prueba:  2016/11/" num"
+
+Los errores pueden ser los siguientes:
+
+1.­ El servidor no está disponible.
+
+2.­ El recurso requiere derechos de acceso.
+
+3.­ El servidor toma demasiado tiempo en responder a una solicitud por el recurso.
+
+Amablemente sugerimos atender dichas ligas y revisar todos los conjuntos de datos restantes que su
+
+dependencia publica en el sitio. Sin más por el momento, me mantengo a su disposición para resolver
+
+cualquier duda sobre el proceso de cumplimiento de la Política de Datos Abiertos en el correo
+
+escuadron@datos.gob.mx o vía telefónica al 50935300 ext: 7054.
+
+Saludos cordiales.
+
+Coordinación de Estrategia Digital Nacional
+
+Presidencia de la República
+
+www.datos.gob.mx")]]
+       (str "pdfs/reporte-" num ".pdf")))
+
+(defn genera-pdf-evidencia-pira
+  [dias data]
+  (let [partitions (int  (/ (count data) dias))]
+    (map #(pdf-evidencia-pira %1 %2)
+         (partition partitions (map :url data))
+         (range 1 dias))))
+
+;(genera-pdf-evidencia-pira NUM-DIAS (errors-today))
