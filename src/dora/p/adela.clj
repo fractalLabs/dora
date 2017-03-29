@@ -1,11 +1,11 @@
 (ns dora.p.adela
   (:require [clojure.string :as s]
             [dora.p.ckan :refer :all]
+            [environ.core :refer [env]]
             [monger.operators :refer :all]
             [mongerr.core :refer :all]))
 
-(def adela-url "http://162.243.229.121/" ;"http://adela.datos.gob.mx/"
-  )
+(def adela-url (or "http://adela.datos.gob.mx/" (env :adela-url))) ;"http://162.243.229.121/"
 
 (defn adela-api [& endpoint]
   (get-json (str adela-url
@@ -15,6 +15,19 @@
   (assoc (adela-api slug "/catalogo.json")
          :slug slug))
 
+(defn transform-resource [res]
+  (assoc res
+         :accessURL (:downloadURL res)
+         :format (:mediaType res)))
+
+(defn transform-dataset [ds]
+  (assoc ds
+         :language [(:language ds)]
+         :distribution (map transform-resource (:distribution ds))))
+
+(defn adela-catalog-data [slug]
+  (let [datasets (:dataset (adela-catalog slug))]
+    (map transform-dataset datasets)))
 ;(defn adela-plan [slug]
 ;  (adela-api slug "/plan.json"))
 
@@ -34,8 +47,15 @@
           :slug slug)))
 
 (defn organizations-req
-  ([] (organizations-req 1))
-  ([page] (adela-api "api/v1/organizations?page=" page)))
+  ([]
+   (let [orgs0 (organizations-req 1)
+         pages (+ 2
+                  (/ (:total (:pagination orgs0))
+                     30))]
+     (distinct (map :slug (concat (:results orgs0) (mapcat #(:results (organizations-req %))
+                                                           (range 2 pages)))))))
+  ([page]
+   (adela-api "api/v1/organizations?page=" page)))
 
 (defn adela-organizations []
   (let [r1 (organizations-req)
