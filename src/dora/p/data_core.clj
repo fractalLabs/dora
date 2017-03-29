@@ -63,6 +63,7 @@
                 (println "updating inventories")
                 (update-db :adela-inventories adela-inventory)]))
 
+(defn fusion [] (update-db :data-fusion data-fusion))
 (defn data-core []
   (doall-recur
    [(println "updating ckan data to api")
@@ -81,8 +82,8 @@
     (println "running save-broken-links")
     (save-broken-links)
     ;(validate-dgm)
-    (println "updating data-fusion" )
-    (update-db :data-fusion data-fusion)
+    (println "updating data-fusion")
+    (fusion)
     (dc-update)]))
 
 (defn today-at
