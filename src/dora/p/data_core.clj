@@ -42,15 +42,6 @@
 (def drive-files {:instituciones "https://docs.google.com/feeds/download/spreadsheets/Export?key=1swzmgetabUT25eog-g6pdgRlc8x9uqz3iCNoruhdnxE&exportFormat=csv&gid=2050308732"
                   :ipda "https://docs.google.com/feeds/download/spreadsheets/Export?key=1swzmgetabUT25eog-g6pdgRlc8x9uqz3iCNoruhdnxE&exportFormat=csv&gid=1077082165"})
 
-(defn parse-drive [m]
-  (zipmap (keys m) (map (comp digitalize csv) (vals m))))
-
-(defn drive [] (parse-drive drive-files))
-
-(defn instituciones []
-  (let [d (drive)]
-    (map #(dissoc % :slug) (join (:instituciones d) (:ipda d) {:siglas :slug}))))
-
 (defn update-db [coll f]
   (do (db-delete coll)
       (db-insert coll (remove-nils (f)))))
@@ -64,9 +55,10 @@
 
 (defn data-core []
   (doall-recur
-   [(println "updating ckan")
+   [(println "updating ckan data to api")
     (update-all-ckan)
-    (update-db :instituciones instituciones)
+    (println "ckan data updated")
+    ;(update-db :instituciones instituciones)
     (println "updating zendesk")
     (update-db :zendesk-tickets all-tickets)
     (update-db :zendesk-organizations all-organizations)
