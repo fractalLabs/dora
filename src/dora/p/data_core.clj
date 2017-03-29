@@ -53,6 +53,16 @@
                 s))
     s))
 
+(defn update-adela []
+  (doall-recur [    (println "updating catalogs")
+
+                (update-db :adela-catalogs adela-catalogs)
+                                        ;(update-db :adela-plans adela-plans)
+                (println "updating organizations")
+                (update-db :adela-organizations adela-organizations)
+                (println "updating inventories")
+                (update-db :adela-inventories adela-inventory)]))
+
 (defn data-core []
   (doall-recur
    [(println "updating ckan data to api")
@@ -64,14 +74,7 @@
     (update-db :zendesk-organizations all-organizations)
     (update-db :zendesk-satisfaction all-satisfaction)
     (update-db :zendesk-users all-users)
-    (println "updating catalogs")
-
-    (update-db :adela-catalogs adela-catalogs)
-                                        ;(update-db :adela-plans adela-plans)
-    (println "updating organizations")
-    (update-db :adela-organizations adela-organizations)
-    (println "updating inventories")
-    (update-db :adela-inventories adela-inventory)
+    (update-adela)
                                         ;(update-db :google_analytics download-data)
     (println "cleaning up old files")
     (mv-old-file)               ;(get-status-1)
