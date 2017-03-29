@@ -56,10 +56,10 @@
 (defn update-adela []
   (doall-recur [    (println "updating catalogs")
 
-                (update-db :adela-catalogs adela-catalogs)
+                ;(update-db :adela-catalogs adela-catalogs)
                                         ;(update-db :adela-plans adela-plans)
                 (println "updating organizations")
-                (update-db :adela-organizations adela-organizations)
+                ;(update-db :adela-organizations adela-organizations)
                 (println "updating inventories")
                 (update-db :adela-inventories adela-inventory)]))
 
