@@ -65,10 +65,10 @@
                                                           %)
                                                   (dataset :distribution)))
                                 datasets))]
-    [(update-db :adela-datasets datasets)
+    [(update-db :adeladatasets datasets)
      (println "datasets in adela: " (count datasets))
-     (update-db :adela-resources resources)
-     (println "resources in adela: " (count (db :adela-resources)))]))
+     (update-db :adelaresources resources)
+     (println "resources in adela: " (count (db :adelaresources)))]))
 
 (defn update-adela []
   (doall-recur [(println "updating catalogs")
