@@ -68,7 +68,7 @@
     [(update-db :adela-datasets datasets)
      (println "datasets in adela: " (count datasets))
      (update-db :adela-resources resources)
-     (println "resources in adela: " (count resources))]))
+     (println "resources in adela: " (count (db :adela-resources)))]))
 
 (defn update-adela []
   (doall-recur [(println "updating catalogs")
