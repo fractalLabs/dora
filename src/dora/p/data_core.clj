@@ -43,8 +43,11 @@
                   :ipda "https://docs.google.com/feeds/download/spreadsheets/Export?key=1swzmgetabUT25eog-g6pdgRlc8x9uqz3iCNoruhdnxE&exportFormat=csv&gid=1077082165"})
 
 (defn update-db [coll f]
-  (do (db-delete coll)
-      (db-insert coll (remove-nils (f)))))
+  (try
+    (let [data (remove-nils (f))]
+      (db-delete coll)
+      (db-insert coll data))
+    (catch Exception e (println "Error updating: " coll "\n\n" e))))
 
 ;; from http://stackoverflow.com/questions/1217131/recursive-doall-in-clojure
 (defn doall-recur [s]
@@ -56,7 +59,7 @@
 (defn update-adela []
   (doall-recur [    (println "updating catalogs")
 
-                ;(update-db :adela-catalogs adela-catalogs)
+                (update-db :adela-catalogs adela-catalogs)
                                         ;(update-db :adela-plans adela-plans)
                 (println "updating organizations")
                 ;(update-db :adela-organizations adela-organizations)
