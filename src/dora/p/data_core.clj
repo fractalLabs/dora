@@ -44,7 +44,7 @@
 
 (defn update-db [coll f]
   (try
-    (let [data (remove-nils (f))]
+    (let [data (remove-nils (if (fn? f) (f) f))]
       (db-delete coll)
       (db-insert coll data))
     (catch Exception e (println "Error updating: " coll "\n\n" e))))
@@ -56,15 +56,29 @@
                 s))
     s))
 
+
+(defn flatten-adela-catalogs []
+  (let [datasets (flatten (map (fn [catalogo] (map #(assoc % :slug (:slug catalogo))
+                                                  (:dataset catalogo)))
+                               (db :adela-catalogs)))
+        resources (flatten (map (fn [dataset] (map #(merge (dissoc dataset :distribution)
+                                                          %)
+                                                  (dataset :distribution)))
+                                datasets))]
+    [(update-db :adela-datasets datasets)
+     (update-db :adela-resources resources)]))
+
 (defn update-adela []
-  (doall-recur [    (println "updating catalogs")
+  (doall-recur [(println "updating catalogs")
 
                 (update-db :adela-catalogs adela-catalogs)
                                         ;(update-db :adela-plans adela-plans)
-                (println "updating organizations")
+                ;(println "updating organizations")
                 ;(update-db :adela-organizations adela-organizations)
                 (println "updating inventories")
-                (update-db :adela-inventories adela-inventory)]))
+                (update-db :adela-inventories adela-inventory)
+                (flatten-adela-catalogs)
+                ]))
 
 (defn fusion [] (update-db :data-fusion data-fusion))
 (defn data-core []
