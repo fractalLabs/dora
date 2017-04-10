@@ -196,7 +196,8 @@
   ([names]
    (doall (pmap #(db-update :resource-metadata
                             {:id %}
-                            (assoc (process-validations (execute-validations (data-directory %) "csv")) :id %))
+                            (assoc (process-validations (execute-validations (data-directory %) "csv"))
+                                   :id %))
                 names)))
   ([]
    (validate-dgm (to-validate))))
