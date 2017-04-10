@@ -52,8 +52,8 @@
          pages (+ 2
                   (/ (:total (:pagination orgs0))
                      30))]
-     (distinct (map :slug (concat (:results orgs0) (mapcat #(:results (organizations-req %))
-                                                           (range 2 pages)))))))
+     (distinct (concat (:results orgs0) (mapcat #(:results (organizations-req %))
+                                                           (range 2 pages))))))
   ([page]
    (adela-api "api/v1/organizations?page=" page)))
 
