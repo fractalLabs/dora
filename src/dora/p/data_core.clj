@@ -75,8 +75,8 @@
 
                 (update-db :adela-catalogs adela-catalogs)
                                         ;(update-db :adela-plans adela-plans)
-                ;(println "updating organizations")
-                ;(update-db :adela-organizations adela-organizations)
+                (println "updating organizations")
+                (update-db :adela-organizations organizations-req)
                 (println "updating inventories")
                 (update-db :adela-inventories adela-inventory)
                 (println "flattening catalogs")

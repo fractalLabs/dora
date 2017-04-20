@@ -196,7 +196,8 @@
   ([names]
    (doall (pmap #(db-update :resource-metadata
                             {:id %}
-                            (assoc (process-validations (execute-validations (data-directory %) "csv")) :id %))
+                            (assoc (process-validations (execute-validations (data-directory %) "csv"))
+                                   :id %))
                 names)))
   ([]
    (validate-dgm (to-validate))))
@@ -365,7 +366,7 @@
   []
   (mapcat flatten-inventory-dataset
           (mapcat flatten-inventory
-                  (db :adela-catalogs ;:adela-inventories;; TODO: cuando entre en vigor el nuevo adela, cambiar a: :adela-inventories
+                  (db :adela-inventories;:adela-catalogs ;:adela-inventories;; TODO: cuando entre en vigor el nuevo adela, cambiar a: :adela-inventories
                       ))))
 
 (defn ieda?
