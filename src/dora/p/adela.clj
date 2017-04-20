@@ -3,7 +3,8 @@
             [dora.p.ckan :refer :all]
             [environ.core :refer [env]]
             [monger.operators :refer :all]
-            [mongerr.core :refer :all]))
+            [mongerr.core :refer :all]
+            [formaterr.core :refer :all]))
 
 (def adela-url (or (env :adela-url) "http://adela.datos.gob.mx/")) ;"http://162.243.229.121/"
 
@@ -68,3 +69,25 @@
   "Search for the catalog that contains a dataset titled 'title'"
   [title]
   (db-findf :adela-catalogs {:dataset {$elemMatch {:title title}}}))
+
+
+
+
+
+
+;;; Data transformations for using in harvesting
+
+(defn dataset-extra-keys [catalog]
+  (assoc catalog :dataset (map #(assoc % :extras [{:key "accrualPeriodicity" :value (:accrualPeriodicity %)}])
+                               (:dataset catalog))))
+
+(defn dora-catalog [organization]
+  (json (dataset-extra-keys (adela-catalog organization))))
+
+(defn adela-to-harvester [organization]
+  (json
+   (map #(assoc % :language [(:language %)]
+                :mbox (:mbox (:publisher %))
+                :extras [{:key "accrualPeriodicity"
+                          :value (:accrualPeriodicity %)}])
+        (:dataset (adela-catalog organization)))))
