@@ -107,6 +107,12 @@
     (fusion)
     (dc-update)]))
 
+(defn data-core-lite []
+  (doall-recur
+   [(update-all-ckan)
+    (update-adela)
+    (dc-update)]))
+
 (defn today-at
   ([] (today-at 0 0 0 0))
   ([h] (today-at h 0 0 0))
