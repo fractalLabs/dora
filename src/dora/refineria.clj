@@ -18,7 +18,7 @@
 
 (defn apify-files []
   (doall
-   (map #(try (db-insert (first %) (csv (second %)))
+   (map #(try (update-db (first %) (csv (second %)))
               (catch Exception e (println "Exception on endpoint " (first %) ", file " (second %) "\n\n" e)))
         mirrored-files)))
 
