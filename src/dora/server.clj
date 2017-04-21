@@ -1,5 +1,5 @@
 (ns dora.server
-  "Ring server, main XHR api"
+  "Ring server, main api"
   (:require [cemerick.friend :as friend]
             (cemerick.friend [workflows :as workflows]
                              [credentials :as creds])
@@ -15,6 +15,7 @@
             [ring.middleware.params :refer [wrap-params]]
             [dora.core :refer :all]
             [dora.data :refer :all]
+            [dora.p.adela :refer :all]
             [dora.p.data-core :refer :all]
             [dora.pro-file :refer :all]
             [dora.util :refer :all]
@@ -79,6 +80,8 @@
    (ANY "/text/:coll" [:as {params :params}]
         (do (db-insert :log (assoc params :tipo "text-search"))
             (db-text-search (:coll params) (:q params))))
+   (ANY "/adela-dcat/:org" [org]
+        (json (adela-catalog-data org)))
    (GET "/auth" req
         (friend/authenticated (str "You have succesfully authenticated as "
                                    (friend/current-authentication))))

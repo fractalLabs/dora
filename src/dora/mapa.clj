@@ -3,6 +3,7 @@
             [digitalize.core :refer :all]
             [formaterr.core :refer :all]
             [mongerr.core :refer :all]))
+(comment
 (def mx (json (slurp "/Users/nex/git/dgm-viz/visualizaciones/mapa/partials/mxGeo.json")))
 
 ;(keys mx)
@@ -132,3 +133,4 @@
 ;;(def mm (genera-mapa :estado :total-de-muestras-para-analisis-bacteriologico :eficiencia-de-cloracion :muestras-aptas-para-consumo))
 ;;(def mmm (assoc mm :features (add-structure (:features mm))))
 ;;(json "/Users/nex/git/dgm-viz/visualizaciones/mapa/partials/muestras-para-analisis-bacteriologico.json" mm)
+)

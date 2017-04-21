@@ -77,6 +77,7 @@
 
 ;; TODO: filtering, "otros"
 
+(comment
 ;;;; cosas especificas
 (def retc (digitalize  (csv "/Users/nex/mirrors/retc/datos%20RETC.csv")))
 (def retc-latest (filter #(= 2013 (:fecha %)) retc))
@@ -119,3 +120,4 @@
 (def rezago-social-estatal (digitalize (csv "/Users/nex/mirrors/rezago-social-estatal/Rezago-social-2000-2005-2010_edos_DA.csv")))
 (def rezagoviz (pie :ent :pobtot-10 rezago-social-estatal))
 (spit-file "/Users/nex/git/dataviz/piechart/partials/poblacion por estado 2010.json" rezagoviz)
+)

@@ -4,6 +4,7 @@
             [cemerick.friend :as friend]
             (cemerick.friend [workflows :as workflows]
                              [credentials :as creds])
+            [cemerick.url :refer :all]
             [clj-http.client :as http]
             [clj-time.format :as f]
             [clj-time.core :as t]
@@ -21,6 +22,7 @@
             [dora.data :refer :all]
             [dora.digitalization :refer :all]
             [dora.p.adela :refer :all]
+            [dora.p.buda :refer :all]
             [dora.p.data-core :refer :all]
             [dora.importer :refer :all]
             [dora.p.download :refer :all]
